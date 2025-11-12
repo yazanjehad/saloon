@@ -7,7 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Role } from './role.entity';
+import { Role } from '../../../common/enums/role.enum';
 // import { Salon } from '../../salons/entities/salon.entity';
 // import { Booking } from '../../bookings/entities/booking.entity';
 // import { Review } from '../../reviews/entities/review.entity';
@@ -33,9 +33,12 @@ export class User {
   password: string;
 
 
-  @ManyToOne(() => Role, (role) => role.users)
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.User,
+  })
   role: Role;
-
 
 //   @OneToMany(() => Salon, (salon) => salon.owner)
 //   salons: Salon[];
