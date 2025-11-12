@@ -32,19 +32,19 @@ export class User {
   @Column()
   password: string;
 
-  // علاقة مع Role
+
   @ManyToOne(() => Role, (role) => role.users)
   role: Role;
 
-//   // علاقة مع Salon (المالك)
+
 //   @OneToMany(() => Salon, (salon) => salon.owner)
 //   salons: Salon[];
 
-//   // علاقة مع Bookings
+
 //   @OneToMany(() => Booking, (booking) => booking.user)
 //   bookings: Booking[];
 
-//   // علاقة مع Reviews
+
 //   @OneToMany(() => Review, (review) => review.user)
 //   reviews: Review[];
 
