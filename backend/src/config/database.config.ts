@@ -12,5 +12,5 @@ export const databaseConfig = async (
   password: configService.get<string>('DB_PASS'),
   database: configService.get<string>('DB_NAME'),
   autoLoadEntities: true,
-  synchronize: true, 
+  synchronize: true,
 });

@@ -6,6 +6,8 @@ import { databaseConfig } from './config/database.config';
 
 // Import feature modules
 import { UsersModule } from './modules/users/users.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { SaloonModule } from './modules/saloon/saloon.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { UsersModule } from './modules/users/users.module';
       useFactory: databaseConfig,
     }),
     UsersModule,
+    AdminModule,
+    SaloonModule,
   ],
 })
 export class AppModule {}
