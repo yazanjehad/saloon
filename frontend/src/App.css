@@ -1,42 +1,25 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+* {
+  border: 0px !important;
+  padding: 0px !important;
+  box-sizing: border-box;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
+:root {
+  --primary-text-color: #503620;
+  /* لون الخط الرئيسي */
+  --input-bg-color: #FFFFFFAD;
+  /* لون خلفية الـ input */
+  --login-bg-color: #BAA88B;
+  /* لون خلفية login container */
+  --button-bg-color: #503620BA;
+  /* لون خلفية زر login */
+  --button-text-color: #E3D9C9;
+  /* لون الخط داخل الزر */
+  --alt-button-bg-color: #FFFFFF69;
+  /* لون خلفية أزرار التسجيل الأخرى (فيسبوك، جوجل...) */
+  --login-bg-color: rgba(186, 168, 139, 0.54);
+  /* لون خلفية login مع الشفافية */
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }

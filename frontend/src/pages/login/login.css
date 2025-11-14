@@ -1,0 +1,66 @@
+.appContainer {
+  display: flex;
+  justify-content: center;
+  /* توسيط أفقي */
+  align-items: flex-start;
+  /* يبدأ من الأعلى بدل المنتصف */
+  height: 100%;
+  padding-top: 52px !important;
+
+}
+
+.loginContainer {
+  width: 612px;
+  height: auto;
+  border-radius: 41px;
+  padding: 0 0 50px 0 !important;
+  background-color: var(--login-bg-color);
+  /* هنا استخدمنا المتغير */
+  display: flex;
+  /* إضافة flex */
+  flex-direction: column;
+  /* العناصر تتراصف عمودياً */
+  align-items: center;
+}
+
+.loginImg {
+  margin-top: 70px;
+}
+
+.inputField {
+  width: 535px;
+}
+
+.forgetPassword {
+  display: flex;
+   justify-content: space-around !important;
+  color: var(--primary-text-color);
+  font-weight: 700;
+  font-size: 21px;
+
+}
+
+.loginBtn{
+  margin-top: 10px;
+}
+
+.loginWith{
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-text-color);
+  margin-top: 60px;
+ padding: 0 30px !important;
+}
+
+.socialAuthButton{
+  display: flex;
+  justify-content: space-around;
+  margin-top: 35px;
+}
+
+.signUpNow{
+  text-decoration: none;
+  font-size: 24px;
+  color: var(--primary-text-color);
+  margin-top: 45px;
+}

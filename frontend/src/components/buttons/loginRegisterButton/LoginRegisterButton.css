@@ -1,0 +1,17 @@
+.loginRegisterBtn {
+  width: 159px;
+  height: 65px;
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 26px;
+  font-size: 23px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.loginRegisterBtn:hover {
+  /* background-color: #6b4a2e; */
+  transform: scale(1.02);
+}
