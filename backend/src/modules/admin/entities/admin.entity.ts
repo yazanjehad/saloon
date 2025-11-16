@@ -13,7 +13,7 @@ export class AdminSaloon {
   @Column({ name: 'last_name' })
   lastName: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, name: 'user_name' })
   userName: string;
 
   
@@ -23,9 +23,6 @@ export class AdminSaloon {
   @Column({ length: 200 })
   password: string;
   
-  @Column({ default: 'admin_saloons' })
-  role: string;
-
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
   @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })

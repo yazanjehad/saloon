@@ -1,11 +1,9 @@
 // src/modules/saloon/entities/saloon.entity.ts
  import { AdminSaloon } from 'src/modules/admin/entities/admin.entity';
-<<<<<<< Updated upstream
-import { Employee } from 'src/modules/employee/entities/employee.entity';
-=======
-  import { Service } from '../../services/entities/service.entity';
+import { Employee } from "../../employee/entities/employee.entity";
+import { Service } from '../../services/entities/service.entity';
 
->>>>>>> Stashed changes
+
 import {
   Entity,
   Column,
@@ -32,7 +30,6 @@ export class Saloon {
   @Column()
   phone: string;
 
-<<<<<<< Updated upstream
   @Column({ name: 'image_url', nullable: true })
   imageUrl: string;
 
@@ -53,12 +50,7 @@ export class Saloon {
   updatedAt: Date;
 
 
-=======
-  @ManyToOne(() => AdminSaloon, (admin) => admin.saloons)
-  @JoinColumn({ name: 'admin_id' })
-  admin: AdminSaloon;
-
   @OneToMany(() => Service, (service) => service.saloon)
   services: Service[];
->>>>>>> Stashed changes
+
 }
