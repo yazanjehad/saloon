@@ -5,9 +5,10 @@ import appConfig from './config/app.config';
 import { databaseConfig } from './config/database.config';
 
 // Import feature modules
-import { UsersModule } from './modules/users/users.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { SaloonModule } from './modules/saloon/saloon.module';
+import { EmployeeModule } from './modules/employee/employee.module';
+import { CustomerModule } from './modules/customer/customer.module';
 
 @Module({
   imports: [
@@ -20,9 +21,10 @@ import { SaloonModule } from './modules/saloon/saloon.module';
       inject: [ConfigService],
       useFactory: databaseConfig,
     }),
-    UsersModule,
     AdminModule,
     SaloonModule,
+    EmployeeModule,
+    CustomerModule,
   ],
 })
 export class AppModule {}
