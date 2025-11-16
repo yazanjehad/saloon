@@ -1,5 +1,5 @@
 // src/modules/saloon/entities/saloon.entity.ts
- import { AdminSaloon } from 'src/modules/admin/entities/admin.entity';
+ import { AdminSaloon } from '../../admin/entities/admin.entity';
 import { Employee } from "../../employee/entities/employee.entity";
 import { Service } from '../../services/entities/service.entity';
 
@@ -50,7 +50,9 @@ export class Saloon {
   updatedAt: Date;
 
 
-  @OneToMany(() => Service, (service) => service.saloon)
+
+  @OneToMany(() => Service, (service: any) => service.saloon)
   services: Service[];
+
 
 }

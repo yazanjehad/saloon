@@ -1,5 +1,5 @@
 // src/modules/admin/entities/admin.entity.ts
-import { Saloon } from 'src/modules/saloon/entities/saloon.entity';
+import { Saloon } from '../../saloon/entities/saloon.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity('admin_saloons')

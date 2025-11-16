@@ -9,7 +9,12 @@ import { AdminModule } from './modules/admin/admin.module';
 import { SaloonModule } from './modules/saloon/saloon.module';
 import { EmployeeModule } from './modules/employee/employee.module';
 import { CustomerModule } from './modules/customer/customer.module';
+<<<<<<< HEAD
 import {ServicesModule} from './modules/services/services.module'
+=======
+import { ServicesModule } from './modules/services/services.module';
+
+>>>>>>> bbb95d8d96e430da4976aad9c5ecb5c3337be4d6
 @Module({
   imports: [
     ConfigModule.forRoot({
