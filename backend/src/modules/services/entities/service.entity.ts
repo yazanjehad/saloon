@@ -47,8 +47,5 @@ export class Service {
   @JoinColumn({ name: 'admin_id' })
   admin: AdminSaloon;
 
-  @ManyToOne(() => Saloon, (saloon) => saloon.services) // اسم العمود في جدول saloons
-  @JoinColumn({ name: 'saloon_id' })
-  saloon: Saloon;
 
 }
