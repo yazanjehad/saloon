@@ -6,8 +6,10 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Saloon } from '../../saloon/entities/saloon.entity';
+import { EmployeeWeeklySchedule } from '../../employee-weekly-schedule/entities/employee-weekly-schedule.entity';
 
 @Entity('employees')
 export class Employee {
@@ -37,6 +39,10 @@ export class Employee {
     nullable: true,
   })
   saloon: Saloon;
+
+
+  @OneToMany(() => EmployeeWeeklySchedule, (schedule) => schedule.employee, { cascade: true })
+weeklySchedule: EmployeeWeeklySchedule[];
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

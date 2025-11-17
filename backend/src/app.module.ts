@@ -10,6 +10,7 @@ import { SaloonModule } from './modules/saloon/saloon.module';
 import { EmployeeModule } from './modules/employee/employee.module';
 import { CustomerModule } from './modules/customer/customer.module';
 import { ServicesModule } from './modules/services/services.module';
+import { EmployeeWeeklyScheduleModule } from './modules/employee-weekly-schedule/employee-weekly-schedule.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ServicesModule } from './modules/services/services.module';
     EmployeeModule,
     CustomerModule,
     ServicesModule,
+    EmployeeWeeklyScheduleModule,
   ],
 })
 export class AppModule {}
