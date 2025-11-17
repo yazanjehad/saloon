@@ -16,6 +16,7 @@ export class CreateAdminDto {
 
   @IsEmail()
   @IsNotEmpty()
+  
   email: string; // Admin email address
 
   @IsString()
