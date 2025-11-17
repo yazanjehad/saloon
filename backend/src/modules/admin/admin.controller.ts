@@ -9,7 +9,7 @@ import { AdminSaloon } from './entities/admin.entity';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  
+  // create a new admin user
   //signup method to register a new admin user
   @Post('signup')
   @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -23,15 +23,7 @@ export class AdminController {
     return this.adminService.login(body.userName, body.password);
   }
 
-
   // CRUD endpoints for admin users
-  // create a new admin user
-  @Post('add')
-  @UsePipes(new ValidationPipe({ whitelist: true }))
-  async create(@Body() createAdminDto: CreateAdminDto): Promise<AdminSaloon> {
-    return this.adminService.create(createAdminDto);
-  }
-
   //get all admin users
   @Get('all')
   async findAll(): Promise<AdminSaloon[]> {

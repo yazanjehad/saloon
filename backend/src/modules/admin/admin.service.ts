@@ -53,11 +53,7 @@ export class AdminService {
   }
 
   // CRUD operations for admin users
-  // Create a new admin user
-  async create(dto: CreateAdminDto): Promise<AdminSaloon> {
-    return this.signup(dto); 
-  }
-
+  
   // Get all admin users
   async findAll(): Promise<AdminSaloon[]> {
     return this.adminRepo.find();
