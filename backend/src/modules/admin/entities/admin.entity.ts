@@ -1,3 +1,4 @@
+// src/modules/admin-saloon/entities/admin-saloon.entity.ts
 // src/modules/admin/entities/admin.entity.ts
 import { Saloon } from '../../saloon/entities/saloon.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
@@ -18,11 +19,18 @@ export class AdminSaloon {
 
   
   @Column({ unique: true })
+  userName: string;
+
+  
+  @Column({ unique: true })
   email: string;
 
   @Column({ length: 200 })
   password: string;
   
+  @Column({ default: 'admin_saloons' })
+  role: string;
+
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
   @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
