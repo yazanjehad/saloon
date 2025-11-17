@@ -16,15 +16,16 @@ export class AdminSaloon {
   @Column({ unique: true, name: 'user_name' })
   userName: string;
  
+
+  
+
+  
   @Column({ unique: true })
   email: string;
 
   @Column({ length: 200 })
   password: string;
   
-  @Column({ default: 'admin_saloons' })
-  role: string;
-
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
   @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })

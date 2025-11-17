@@ -49,8 +49,9 @@ export class Saloon {
   @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
+  
 
-
+  
   @OneToMany(() => Service, (service: any) => service.saloon)
   services: Service[];
 

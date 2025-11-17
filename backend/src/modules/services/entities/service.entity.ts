@@ -42,10 +42,21 @@ export class Service {
   @Column({ name: 'image_url', nullable: true })
   imageUrl?: string;
 
-  //
+    /** ==========================
+   * 1) علاقة الخدمة مع المدير
+   * ========================== */
   @ManyToOne(() => AdminSaloon, (admin) => admin.saloons)
   @JoinColumn({ name: 'admin_id' })
   admin: AdminSaloon;
+
+    /** ==========================
+   * 2) علاقة الخدمة مع الصالون
+   * ========================== */
+  @ManyToOne(() => Saloon, (saloon) => saloon.services)
+  @JoinColumn({ name: 'saloon_id' })
+  saloon: Saloon;
+
+
 
 
 }
