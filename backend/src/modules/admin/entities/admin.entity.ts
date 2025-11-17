@@ -31,3 +31,4 @@ export class AdminSaloon {
    @OneToMany(() => Saloon, (saloon) => saloon.admin, { cascade: true })
   saloons: Saloon[];
 }
+
