@@ -1,3 +1,4 @@
+// src/modules/admin-saloon/entities/admin-saloon.entity.ts
 // src/modules/admin/entities/admin.entity.ts
 import { Saloon } from '../../saloon/entities/saloon.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
@@ -17,6 +18,8 @@ export class AdminSaloon {
   userName: string;
 
   
+
+  
   @Column({ unique: true })
   email: string;
 
@@ -31,4 +34,3 @@ export class AdminSaloon {
    @OneToMany(() => Saloon, (saloon) => saloon.admin, { cascade: true })
   saloons: Saloon[];
 }
-
