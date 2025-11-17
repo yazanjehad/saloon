@@ -2,15 +2,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
-  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Role } from '../../../common/enums/role.enum';
-// import { Salon } from '../../salons/entities/salon.entity';
-// import { Booking } from '../../bookings/entities/booking.entity';
-// import { Review } from '../../reviews/entities/review.entity';
 
 @Entity('users')
 export class User {
@@ -31,25 +25,6 @@ export class User {
 
   @Column()
   password: string;
-
-
-  @Column({
-    type: 'enum',
-    enum: Role,
-    default: Role.User,
-  })
-  role: Role;
-
-//   @OneToMany(() => Salon, (salon) => salon.owner)
-//   salons: Salon[];
-
-
-//   @OneToMany(() => Booking, (booking) => booking.user)
-//   bookings: Booking[];
-
-
-//   @OneToMany(() => Review, (review) => review.user)
-//   reviews: Review[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

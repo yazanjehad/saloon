@@ -1,10 +1,16 @@
-// src/modules/admin-saloon/entities/admin-saloon.entity.ts
-// src/modules/admin/entities/admin.entity.ts
+// src/modules/employee/employee.entity.ts
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Saloon } from '../../saloon/entities/saloon.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
-@Entity('admin_saloons')
-export class AdminSaloon {
+@Entity('employees')
+export class Employee {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,28 +20,26 @@ export class AdminSaloon {
   @Column({ name: 'last_name' })
   lastName: string;
 
-  @Column({ unique: true, name: 'user_name' })
+  @Column({ name: 'user_name', unique: true })
   userName: string;
 
-  
-  @Column({ unique: true })
-  userName: string;
-
-  
   @Column({ unique: true })
   email: string;
 
   @Column({ length: 200 })
   password: string;
+
+  @Column({ length: 15 })
+  phone: string;
   
-  @Column({ default: 'admin_saloons' })
-  role: string;
+  @ManyToOne(() => Saloon, (saloon) => saloon.employees, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  saloon: Saloon;
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
   @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
-
-   @OneToMany(() => Saloon, (saloon) => saloon.admin, { cascade: true })
-  saloons: Saloon[];
 }
