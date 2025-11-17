@@ -16,12 +16,7 @@ export class AdminSaloon {
 
   @Column({ unique: true, name: 'user_name' })
   userName: string;
-
-  
-  @Column({ unique: true })
-  userName: string;
-
-  
+ 
   @Column({ unique: true })
   email: string;
 
