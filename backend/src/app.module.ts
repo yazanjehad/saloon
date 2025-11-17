@@ -9,6 +9,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { SaloonModule } from './modules/saloon/saloon.module';
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({
