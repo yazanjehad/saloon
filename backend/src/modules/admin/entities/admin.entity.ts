@@ -1,4 +1,3 @@
-// src/modules/admin-saloon/entities/admin-saloon.entity.ts
 // src/modules/admin/entities/admin.entity.ts
 import { Saloon } from '../../saloon/entities/saloon.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
