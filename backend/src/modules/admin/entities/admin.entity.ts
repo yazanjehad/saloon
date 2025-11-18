@@ -21,10 +21,14 @@ export class AdminSaloon {
 
   @Column({ length: 200 })
   password: string;
-  
-  @Column({ default: 'admin_saloons' })
-  role: string;
 
+  // add phon,imge columns
+  @Column( { unique: true })
+  phone: string;  
+  
+  @Column()
+  ImageUrl: string; 
+  
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
   @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
