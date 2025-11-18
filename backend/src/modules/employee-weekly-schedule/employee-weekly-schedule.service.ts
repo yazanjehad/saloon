@@ -1,26 +1,59 @@
-import { Injectable } from '@nestjs/common';
-import { CreateEmployeeWeeklyScheduleDto } from './dto/create-employee-weekly-schedule.dto';
-import { UpdateEmployeeWeeklyScheduleDto } from './dto/update-employee-weekly-schedule.dto';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { EmployeeWeeklySchedule } from './entities/employee-weekly-schedule.entity';
 
 @Injectable()
 export class EmployeeWeeklyScheduleService {
-  create(createEmployeeWeeklyScheduleDto: CreateEmployeeWeeklyScheduleDto) {
-    return 'This action adds a new employeeWeeklySchedule';
+  constructor(
+    @InjectRepository(EmployeeWeeklySchedule)
+    private readonly scheduleRepo: Repository<EmployeeWeeklySchedule>,
+  ) {}
+  async create(dto: any) {
+    // تحقق من التكرار
+    const existing = await this.scheduleRepo.findOne({
+      where: { employee: { id: dto.employee }, date: dto.date }
+    });
+    if (existing) throw new BadRequestException('Schedule already exists for this date');
+
+    const schedule = this.scheduleRepo.create(dto);
+    return await this.scheduleRepo.save(schedule);
   }
 
-  findAll() {
-    return `This action returns all employeeWeeklySchedule`;
+  async findAll() {
+    return await this.scheduleRepo.find({
+      relations: ['employee'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employeeWeeklySchedule`;
+  async findByEmployee(employeeId: number) {
+    return await this.scheduleRepo.find({
+      where: { employee: { id: employeeId } },
+      relations: ['employee'],
+    });
   }
 
-  update(id: number, updateEmployeeWeeklyScheduleDto: UpdateEmployeeWeeklyScheduleDto) {
-    return `This action updates a #${id} employeeWeeklySchedule`;
+  async findOne(id: number) {
+    const schedule = await this.scheduleRepo.findOne({
+      where: { id },
+      relations: ['employee'],
+    });
+
+    if (!schedule) {
+      throw new NotFoundException('Weekly schedule not found');
+    }
+
+    return schedule;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} employeeWeeklySchedule`;
+  async update(id: number, dto: any) {
+    const schedule = await this.findOne(id);
+    Object.assign(schedule, dto);
+    return await this.scheduleRepo.save(schedule);
+  }
+
+  async remove(id: number) {
+    const schedule = await this.findOne(id);
+    return await this.scheduleRepo.remove(schedule);
   }
 }
