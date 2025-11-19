@@ -1,30 +1,47 @@
-import { IsString, IsEmail, MinLength, IsNotEmpty, Matches } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  MinLength,
+  IsNotEmpty,
+  Matches,
+} from 'class-validator';
 
 export class CreateAdminDto {
-  // Data Transfer Object for creating a new admin user
-  @IsString() // Validate that userName is a string
-  @IsNotEmpty() // Validate that userName is not empty
-  userName: string; // Admin username
+  @IsString()
+  @IsNotEmpty()
+  userName: string;
 
   @IsString()
   @IsNotEmpty()
-  firstName: string; // Admin first name
+  firstName: string;
 
   @IsString()
   @IsNotEmpty()
-  lastName: string; // Admin last name
+  lastName: string;
 
   @IsEmail()
   @IsNotEmpty()
-  
-  email: string; // Admin email address
+  email: string;
 
   @IsString()
   @IsNotEmpty()
-  @MinLength(6) // Minimum length of 6 characters for password
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/, { 
-    message: 'Password too weak'  // Password must contain at least one letter and one number
+  @MinLength(6)
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/, {
+    message: 'Password too weak',
   })
-  password: string; // Admin password
-}
+  password: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^[0-9]{10,15}$/, {
+    message: 'Phone must be between 10 and 15 digits',
+  })
+  phone: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^(https?:\/\/.*\.(?:png|jpg|jpeg|webp|gif))$/i, {
+    message: 'Invalid image URL format',
+  })
+  imageUrl: string;
+}

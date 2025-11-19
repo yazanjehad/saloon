@@ -8,7 +8,7 @@ export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
   @Post()
-  create(@Body() createEmployeeDto: CreateEmployeeDto) {
+  create(@Body() createEmployeeDto: CreateEmployeeDto,) {
     return this.employeeService.create(createEmployeeDto);
   }
 

@@ -2,6 +2,9 @@ import { Controller, Get, Post, Patch, Delete, Param, Body, ParseIntPipe, UsePip
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { promises } from 'dns';
+import { CustomerResponseDto } from './dto/customer-response.dto';
+
 
 @Controller('customer')
 export class CustomerController {
@@ -20,26 +23,31 @@ export class CustomerController {
 
   // CRUD endpoints for customer users 
   // Get all customers
-  @Get('all')
-  findAll() {
-    return this.customerService.findAll();
-  }
+    @Get('all')
+  async findAll(): Promise<CustomerResponseDto[]> {
+    const customers = await this.customerService.findAll();
+    return customers.map(customer => new CustomerResponseDto(customer));
+  } 
 
   // Get a specific customer by ID
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.customerService.findOne(+id);
+    @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<CustomerResponseDto> {
+    const customer = await this.customerService.findOne(id);
+    return new CustomerResponseDto(customer);
   }
-
   // Update a customer's information
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
-    return this.customerService.update(+id, updateCustomerDto);
-  }
+async update(
+  @Param('id') id: string, 
+  @Body() updateCustomerDto: UpdateCustomerDto
+): Promise<{ message: string }> {
+  await this.customerService.update(+id, updateCustomerDto); 
+  return { message: 'Customer updated successfully' };  
+}
 
   // Delete a customer by ID
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.customerService.remove(+id);
-  }
+  async remove(@Param('id', ParseIntPipe) id: number) {
+  await this.customerService.remove(id);
+  return { message: 'Customer deleted successfully' };  }
 }

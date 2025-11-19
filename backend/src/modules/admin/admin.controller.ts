@@ -3,6 +3,7 @@ import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { AdminSaloon } from './entities/admin.entity';
+import { AdminResponseDto } from './dto/admin-response.dto';
 
 // Controller to handle admin-related HTTP requests
 @Controller('admin')
@@ -26,15 +27,17 @@ export class AdminController {
   // CRUD endpoints for admin users
   //get all admin users
   @Get('all')
-  async findAll(): Promise<AdminSaloon[]> {
-    return this.adminService.findAll();
-  }
+async findAll(): Promise<AdminResponseDto[]> {
+  const admins = await this.adminService.findAll();
+  return admins.map(admin => new AdminResponseDto(admin)); 
+}
 
   //get a specific admin user by id
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<AdminSaloon> {
-    return this.adminService.findOne(id);
-  }
+async findOne(@Param('id', ParseIntPipe) id: number): Promise<AdminResponseDto> {
+  const admin = await this.adminService.findOne(id); 
+  return new AdminResponseDto(admin); 
+}
 
   //update an existing admin user
   @Patch(':id')
@@ -42,13 +45,16 @@ export class AdminController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAdminDto: UpdateAdminDto,
-  ): Promise<AdminSaloon> {
-    return this.adminService.update(id, updateAdminDto);
+  ): Promise<{message: string}> {
+    await this.adminService.update(id, updateAdminDto);
+    return { message: 'Admin updated successfully' };
   }
-
   //delete an admin user
-  @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
-    return this.adminService.remove(id);
-  }
+ @Delete(':id')
+async remove(@Param('id', ParseIntPipe) id: number) {
+  await this.adminService.remove(id);
+  return { message: 'Admin deleted successfully' };
+}
+
+  
 }
