@@ -1,15 +1,20 @@
-// src/modules/customer/customer.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('customers')
 export class Customer {
   @PrimaryGeneratedColumn()
   id: number;
-   
-  @Column({ name: 'first_name'})
+
+  @Column({ name: 'first_name' })
   firstName: string;
 
-  @Column({ name: 'last_name'})
+  @Column({ name: 'last_name' })
   lastName: string;
 
   @Column({ name: 'user_name', unique: true })
@@ -21,9 +26,9 @@ export class Customer {
   @Column({ length: 200 })
   password: string;
 
-  
-  @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
-  @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
 }

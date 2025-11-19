@@ -1,29 +1,42 @@
-// src/modules/admin-saloon/admin.service.ts
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+// src/modules/admin/admin.service.ts
+
+import { JwtService } from '@nestjs/jwt';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+
 import { AdminSaloon } from './entities/admin.entity';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 
-// Service to manage admin users for the saloon application
+interface AdminJwtPayload {
+  sub: number;
+  userName: string;
+  role: string;
+}
+
 @Injectable()
 export class AdminService {
   constructor(
     @InjectRepository(AdminSaloon)
     private readonly adminRepo: Repository<AdminSaloon>,
+    private readonly jwtService: JwtService,
   ) {}
 
-  // Method to handle admin signup
+  // ================================
+  // SIGNUP — إنشاء حساب أدمن جديد
+  // ================================
   async signup(dto: CreateAdminDto) {
     const exists = await this.adminRepo.findOne({
       where: { userName: dto.userName },
     });
-
-    if (exists) {
-      throw new ConflictException('User already exists');
-    }
+    if (exists) throw new ConflictException('User already exists');
 
     const hashed = await bcrypt.hash(dto.password, 10);
 
@@ -32,48 +45,68 @@ export class AdminService {
       password: hashed,
     });
 
-    return this.adminRepo.save(admin);
+    const saved = await this.adminRepo.save(admin);
+
+    return {
+      id: saved.id,
+      userName: saved.userName,
+    };
   }
 
-  // Method to handle admin login
+  // ================================
+  // LOGIN — إرجاع JWT Token للأدمن
+  // ================================
   async login(userName: string, password: string) {
+    // البحث عن الأدمن
     const admin = await this.adminRepo.findOne({ where: { userName } });
+    if (!admin) throw new UnauthorizedException('Invalid credentials');
 
-    if (!admin) {
-      throw new NotFoundException('Invalid credentials');
-    }
-
+    // التحقق من كلمة المرور
     const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) throw new UnauthorizedException('Invalid credentials');
 
-    if (!isMatch) {
-      throw new NotFoundException('Invalid credentials');
-    }
+    // إعداد الـ payload
+    const payload: AdminJwtPayload = {
+      sub: admin.id,
+      userName: admin.userName,
+      role: 'admin',
+    };
 
-    return { message: 'Login successful', adminId: admin.id };
+    // إنشاء الـ JWT token
+    const token = this.jwtService.sign(payload);
+
+    // إرجاع النتيجة
+    return {
+      message: 'Login successful',
+      access_token: token,
+      admin: {
+        id: admin.id,
+        userName: admin.userName,
+      },
+    };
   }
 
-  // CRUD operations for admin users
-  
-  // Get all admin users
+  // ================================
+  // CRUD — العمليات العادية للأدمن
+  // ================================
   async findAll(): Promise<AdminSaloon[]> {
     return this.adminRepo.find();
   }
 
-  // Get a specific admin user by ID
   async findOne(id: number): Promise<AdminSaloon> {
     const admin = await this.adminRepo.findOne({ where: { id } });
-    if (!admin) throw new NotFoundException();
+    if (!admin) throw new NotFoundException('Admin not found');
     return admin;
   }
 
-  // Update an existing admin user
   async update(id: number, dto: UpdateAdminDto): Promise<AdminSaloon> {
-    await this.adminRepo.update(id, dto);
-    return this.findOne(id);
+    const admin = await this.findOne(id);
+    Object.assign(admin, dto);
+    return this.adminRepo.save(admin);
   }
 
-  // Delete an admin user
   async remove(id: number) {
-    return this.adminRepo.delete(id);
+    const admin = await this.findOne(id);
+    return this.adminRepo.remove(admin);
   }
 }

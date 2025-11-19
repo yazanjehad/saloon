@@ -1,6 +1,6 @@
 // src/modules/saloon/entities/saloon.entity.ts
  import { AdminSaloon } from '../../admin/entities/admin.entity';
-import { Employee } from "../../employee/entities/employee.entity";
+//import { Employee } from "../../employee/entities/employee.entity";
 import { Service } from '../../services/entities/service.entity';
 
 
@@ -41,19 +41,19 @@ export class Saloon {
 
   // One-to-Many relationship with Employee
   // A saloon can have multiple employees
-  @OneToMany(() => Employee, (employee) => employee.saloon)
-  employees: Employee[];
+  // @OneToMany(() => Employee, (employee) => employee.saloon)
+  // employees: Employee[];
 
-  @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
-  @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
-
-  
+  // @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  // createdAt: Date;
+  // @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  // updatedAt: Date;
 
   
-  @OneToMany(() => Service, (service: any) => service.saloon)
-  services: Service[];
+
+  
+  // @OneToMany(() => Service, (service: any) => service.saloon)
+  // services: Service[];
 
 
 }

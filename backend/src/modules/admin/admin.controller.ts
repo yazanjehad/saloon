@@ -1,43 +1,63 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, ParseIntPipe, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  ParseIntPipe,
+  UsePipes,
+  ValidationPipe,
+  UseGuards,
+} from '@nestjs/common';
+
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { AdminSaloon } from './entities/admin.entity';
 
-// Controller to handle admin-related HTTP requests
+import { AdminGuard } from 'src/auth/guards/admin.guard';
+
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  // create a new admin user
-  //signup method to register a new admin user
+  // ================================
+  //       Admin Signup
+  // ================================
   @Post('signup')
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async signup(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.signup(createAdminDto);
   }
 
-  // Login method to authenticate an admin user
+  // ================================
+  //       Admin Login
+  // ================================
   @Post('login')
   async login(@Body() body: { userName: string; password: string }) {
     return this.adminService.login(body.userName, body.password);
   }
 
-  // CRUD endpoints for admin users
-  //get all admin users
+  // ================================
+  //       Protected Routes
+  // ================================
+
   @Get('all')
+  @UseGuards(AdminGuard)
   async findAll(): Promise<AdminSaloon[]> {
     return this.adminService.findAll();
   }
 
-  //get a specific admin user by id
   @Get(':id')
+  @UseGuards(AdminGuard)
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<AdminSaloon> {
     return this.adminService.findOne(id);
   }
 
-  //update an existing admin user
   @Patch(':id')
+  @UseGuards(AdminGuard)
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -46,8 +66,8 @@ export class AdminController {
     return this.adminService.update(id, updateAdminDto);
   }
 
-  //delete an admin user
   @Delete(':id')
+  @UseGuards(AdminGuard)
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.adminService.remove(id);
   }
