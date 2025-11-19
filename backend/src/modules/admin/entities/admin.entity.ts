@@ -15,11 +15,7 @@ export class AdminSaloon {
 
   @Column({ unique: true, name: 'user_name' })
   userName: string;
- 
 
-  
-
-  
   @Column({ unique: true })
   email: string;
 
@@ -30,8 +26,8 @@ export class AdminSaloon {
   @Column( { unique: true })
   phone: string;  
   
-  @Column()
-  ImageUrl: string; 
+  @Column({ name: 'image_url' })
+  imageUrl: string;
   
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

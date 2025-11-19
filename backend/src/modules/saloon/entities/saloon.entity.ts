@@ -1,8 +1,7 @@
 // src/modules/saloon/entities/saloon.entity.ts
- import { AdminSaloon } from '../../admin/entities/admin.entity';
+import { AdminSaloon } from '../../admin/entities/admin.entity';
 import { Employee } from "../../employee/entities/employee.entity";
 import { Service } from '../../services/entities/service.entity';
-
 import {
   Entity,
   Column,
@@ -10,6 +9,8 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('saloons')
@@ -30,40 +31,37 @@ export class Saloon {
   phone: string;
 
   @Column({ name: 'image_url', nullable: true })
-  imageUrl: string;
+  imageUrl?: string;
 
-  // add  description , openingHours, rating, latitude, longitude
+    // add  description , openingHours, rating, latitude, longitude
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description?: string;
 
   @Column({ name: 'opening_hours', nullable: true })
-  openingHours: string;
+  openingHours?: string;
 
   @Column({ type: 'float', default: 0 })
   rating: number;
 
   @Column({ type: 'double', nullable: true })
-  latitude: number;
+  latitude?: number;
 
   @Column({ type: 'double', nullable: true })
-  longitude: number;
+  longitude?: number;
 
   @ManyToOne(() => AdminSaloon, (admin) => admin.saloons)
-  @JoinColumn({ name: 'admin_id' }) 
+  @JoinColumn({ name: 'admin_id' })
   admin: AdminSaloon;
 
   @OneToMany(() => Employee, (employee) => employee.saloon)
   employees: Employee[];
 
-  @OneToMany(() => Service, (service: any) => service.saloon)
+  @OneToMany(() => Service, (service) => service.saloon)
   services: Service[];
 
-  @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }
-
-
-

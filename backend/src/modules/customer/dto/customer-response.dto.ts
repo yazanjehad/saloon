@@ -8,7 +8,7 @@ export class CustomerResponseDto {
   email: string;
   phone: string;
   gender: string;
-  ImageUrl?: string;
+  imageUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 
@@ -20,7 +20,7 @@ export class CustomerResponseDto {
     this.email = customer.email;
     this.phone = customer.phone;
     this.gender = customer.gender;
-    this.ImageUrl = customer.ImageUrl;
+    this.imageUrl = customer.imageUrl;
     this.createdAt = customer.createdAt;
     this.updatedAt = customer.updatedAt;
   }

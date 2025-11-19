@@ -1,4 +1,12 @@
-import { IsString, IsEmail, MinLength, IsNotEmpty, Matches, IsIn } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  MinLength,
+  IsNotEmpty,
+  Matches,
+  IsIn,
+  IsOptional,
+} from 'class-validator';
 
 export class CreateCustomerDto {
   @IsString()
@@ -18,22 +26,24 @@ export class CreateCustomerDto {
   email: string;
 
   @IsString()
-  @IsNotEmpty()
   @MinLength(6)
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/, {
     message: 'Password too weak',
   })
   password: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @Matches(/^[0-9]{10,15}$/, {
+    message: 'Phone must be between 10 and 15 digits',
+  })
   phone: string;
 
-  @IsNotEmpty()
   @IsIn(['Male', 'Female'])
-  gender: string;
+  gender: 'Male' | 'Female';
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  imageUrl: string;
+  @Matches(/^(https?:\/\/.*\.(?:png|jpg|jpeg|webp|gif))$/i, {
+    message: 'Invalid image URL format',
+  })
+  imageUrl?: string;
 }

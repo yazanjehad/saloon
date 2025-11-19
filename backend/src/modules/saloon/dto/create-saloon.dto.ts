@@ -4,31 +4,31 @@ import { IsString, IsNotEmpty, IsOptional, IsNumber, Min, Max } from 'class-vali
 export class CreateSaloonDto {
   @IsString()
   @IsNotEmpty()
-  name: string; 
+  name: string;
 
   @IsString()
   @IsNotEmpty()
-  address: string; 
+  address: string;
 
   @IsString()
   @IsNotEmpty()
-  city: string; 
+  city: string;
 
   @IsString()
   @IsNotEmpty()
-  phone: string; 
+  phone: string;
 
   @IsString()
   @IsOptional()
-  imageUrl?: string; 
-  
-  @IsString()
-  @IsOptional()
-  description?: string; 
+  imageUrl?: string;
 
   @IsString()
   @IsOptional()
-  openingHours?: string; 
+  description?: string;
+
+  @IsString()
+  @IsOptional()
+  openingHours?: string;
 
   @IsNumber()
   @Min(0)
@@ -38,13 +38,13 @@ export class CreateSaloonDto {
 
   @IsNumber()
   @IsOptional()
-  latitude?: number; 
+  latitude?: number;
 
   @IsNumber()
   @IsOptional()
-  longitude?: number; 
+  longitude?: number;
 
   @IsNumber()
   @IsOptional()
-  adminId?: number; 
+  adminId?: number;
 }
