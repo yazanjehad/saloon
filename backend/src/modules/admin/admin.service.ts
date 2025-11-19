@@ -1,5 +1,8 @@
-// src/modules/admin-saloon/admin.service.ts
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -7,7 +10,6 @@ import { AdminSaloon } from './entities/admin.entity';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 
-// Service to manage admin users for the saloon application
 @Injectable()
 export class AdminService {
   constructor(
@@ -15,27 +17,31 @@ export class AdminService {
     private readonly adminRepo: Repository<AdminSaloon>,
   ) {}
 
-  // Method to handle admin signup
-  async signup(dto: CreateAdminDto) {
+  async signup(dto: CreateAdminDto): Promise<AdminSaloon> {
+    // check uniqueness
     const exists = await this.adminRepo.findOne({
-      where: { userName: dto.userName },
+      where: [
+        { userName: dto.userName },
+        { email: dto.email },
+        { phone: dto.phone },
+      ],
     });
 
     if (exists) {
       throw new ConflictException('User already exists');
     }
 
-    const hashed = await bcrypt.hash(dto.password, 10);
+    // hash password
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
 
     const admin = this.adminRepo.create({
       ...dto,
-      password: hashed,
+      password: hashedPassword,
     });
 
     return this.adminRepo.save(admin);
   }
 
-  // Method to handle admin login
   async login(userName: string, password: string) {
     const admin = await this.adminRepo.findOne({ where: { userName } });
 
@@ -49,31 +55,41 @@ export class AdminService {
       throw new NotFoundException('Invalid credentials');
     }
 
-    return { message: 'Login successful', adminId: admin.id };
+    return {
+      message: 'Login successful',
+      adminId: admin.id,
+      // place to add JWT token when ready
+    };
   }
-
-  // CRUD operations for admin users
-  
-  // Get all admin users
-  async findAll(): Promise<AdminSaloon[]> {
+  // CRUD Operations
+  // find all admins
+  findAll() {
     return this.adminRepo.find();
   }
 
-  // Get a specific admin user by ID
-  async findOne(id: number): Promise<AdminSaloon> {
+  // find one admin by id
+  async findOne(id: number) {
     const admin = await this.adminRepo.findOne({ where: { id } });
-    if (!admin) throw new NotFoundException();
+    if (!admin) throw new NotFoundException('Admin not found');
     return admin;
   }
 
-  // Update an existing admin user
-  async update(id: number, dto: UpdateAdminDto): Promise<AdminSaloon> {
-    await this.adminRepo.update(id, dto);
-    return this.findOne(id);
+  // update admin
+  async update(id: number, dto: UpdateAdminDto) {
+    const admin = await this.findOne(id);
+
+    if (dto.password) {
+      dto.password = await bcrypt.hash(dto.password, 10);
+    }
+
+    Object.assign(admin, dto);
+
+    return this.adminRepo.save(admin);
   }
 
-  // Delete an admin user
+  // remove admin
   async remove(id: number) {
-    return this.adminRepo.delete(id);
+    const admin = await this.findOne(id);
+    return this.adminRepo.remove(admin);
   }
 }
