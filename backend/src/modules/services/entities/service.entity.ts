@@ -1,4 +1,3 @@
-import { AdminSaloon } from 'src/modules/admin/entities/admin.entity';
 import { Saloon } from '../../saloon/entities/saloon.entity';
 
 import {
@@ -42,10 +41,15 @@ export class Service {
   @Column({ name: 'image_url', nullable: true })
   imageUrl?: string;
 
-  //
-  @ManyToOne(() => AdminSaloon, (admin) => admin.saloons)
-  @JoinColumn({ name: 'admin_id' })
-  admin: AdminSaloon;
+
+    /** ==========================
+   * 2) علاقة الخدمة مع الصالون
+   * ========================== */
+  @ManyToOne(() => Saloon, (saloon) => saloon.services)
+  @JoinColumn({ name: 'saloon_id' })
+  saloon: Saloon;
+
+
 
 
 }
