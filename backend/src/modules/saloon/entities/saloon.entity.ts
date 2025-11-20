@@ -1,6 +1,6 @@
 // src/modules/saloon/entities/saloon.entity.ts
 import { AdminSaloon } from '../../admin/entities/admin.entity';
-import { Employee } from "../../employee/entities/employee.entity";
+import { Employee } from '../../employee/entities/employee.entity';
 import { Service } from '../../services/entities/service.entity';
 import {
   Entity,
@@ -33,7 +33,7 @@ export class Saloon {
   @Column({ name: 'image_url', nullable: true })
   imageUrl?: string;
 
-    // add  description , openingHours, rating, latitude, longitude
+  // add  description , openingHours, rating, latitude, longitude
   @Column({ type: 'text', nullable: true })
   description?: string;
 
@@ -49,6 +49,12 @@ export class Saloon {
   @Column({ type: 'double', nullable: true })
   longitude?: number;
 
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
+
   @ManyToOne(() => AdminSaloon, (admin) => admin.saloons)
   @JoinColumn({ name: 'admin_id' })
   admin: AdminSaloon;
@@ -58,10 +64,4 @@ export class Saloon {
 
   @OneToMany(() => Service, (service) => service.saloon)
   services: Service[];
-
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
 }

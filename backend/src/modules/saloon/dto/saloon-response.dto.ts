@@ -1,5 +1,5 @@
 // src/modules/saloon/dto/saloon-response.dto.ts
-import { Saloon } from "../entities/saloon.entity";
+import { Saloon } from '../entities/saloon.entity';
 
 export class SaloonResponseDto {
   id: number;
@@ -15,6 +15,8 @@ export class SaloonResponseDto {
   longitude?: number;
   createdAt: Date;
   updatedAt: Date;
+  admin_id: number;
+  employees?: any[];
 
   constructor(saloon: Saloon) {
     this.id = saloon.id;
@@ -30,5 +32,7 @@ export class SaloonResponseDto {
     this.longitude = saloon.longitude;
     this.createdAt = saloon.createdAt;
     this.updatedAt = saloon.updatedAt;
+    this.admin_id = saloon.admin.id;
+    this.employees = saloon.employees;
   }
 }

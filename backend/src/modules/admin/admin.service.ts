@@ -64,12 +64,15 @@ export class AdminService {
   // CRUD Operations
   // find all admins
   findAll() {
-    return this.adminRepo.find();
+    return this.adminRepo.find({ relations: ['saloons', 'saloons.employees'] });
   }
 
   // find one admin by id
   async findOne(id: number) {
-    const admin = await this.adminRepo.findOne({ where: { id } });
+    const admin = await this.adminRepo.findOne({
+      where: { id },
+      relations: ['saloons', 'saloons.employees'],
+    });
     if (!admin) throw new NotFoundException('Admin not found');
     return admin;
   }

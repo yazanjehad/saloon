@@ -20,13 +20,13 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   // Create a new admin
- @Post('signup')
+  @Post('signup')
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async signup(@Body() dto: CreateAdminDto) {
     const admin = await this.adminService.signup(dto);
     return new AdminResponseDto(admin);
   }
- 
+
   // Admin login
   @Post('login')
   async login(@Body() body: { userName: string; password: string }) {
