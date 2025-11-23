@@ -13,6 +13,5 @@ import { BookingSlot } from '../booking-slot/entities/booking-slot.entity';
   controllers: [EmployeeController],
   providers: [EmployeeService],
   exports: [EmployeeService],
-  
 })
 export class EmployeeModule {}

@@ -23,17 +23,26 @@ export class AdminSaloon {
   password: string;
 
   // add phon,imge columns
-  @Column( { unique: true })
-  phone: string;  
-  
-  @Column({ name: 'image_url' })
+  @Column({ unique: true })
+  phone: string;
+
+  @Column({ name: 'image_url', nullable: true })
   imageUrl: string;
-  
-  @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   createdAt: Date;
-  @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
   updatedAt: Date;
 
-   @OneToMany(() => Saloon, (saloon) => saloon.admin, { cascade: true })
+  @OneToMany(() => Saloon, (saloon) => saloon.admin, { cascade: true })
   saloons: Saloon[];
 }

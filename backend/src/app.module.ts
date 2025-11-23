@@ -14,6 +14,7 @@ import { EmployeeWeeklyScheduleModule } from './modules/employee-weekly-schedule
 import { BookingSlotModule } from './modules/booking-slot/booking-slot.module';
 import { AppointmentModule } from './modules/appointment/appointment.module';
 import { AppointmentServiceModule } from './modules/appointment-service/appointment-service.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AppointmentServiceModule } from './modules/appointment-service/appointm
     AppointmentModule,
     AppointmentServiceModule,
     
+    ReviewsModule,
   ],
   
 })

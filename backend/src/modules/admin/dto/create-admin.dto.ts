@@ -4,6 +4,7 @@ import {
   MinLength,
   IsNotEmpty,
   Matches,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateAdminDto {
@@ -39,7 +40,7 @@ export class CreateAdminDto {
   phone: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @Matches(/^(https?:\/\/.*\.(?:png|jpg|jpeg|webp|gif))$/i, {
     message: 'Invalid image URL format',
   })
