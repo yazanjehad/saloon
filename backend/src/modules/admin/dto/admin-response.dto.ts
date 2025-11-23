@@ -6,6 +6,7 @@ export class AdminResponseDto {
   email: string;
   phone: string;
   imageUrl?: string;
+  saloons?: any[];
 
   constructor(admin: any) {
     this.id = admin.id;
@@ -14,7 +15,8 @@ export class AdminResponseDto {
     this.lastName = admin.lastName;
     this.email = admin.email;
     this.phone = admin.phone;
-    this.imageUrl = admin.imageUrl;  
+    this.imageUrl = admin.imageUrl;
+    this.saloons = admin.saloons;
   }
 }
 

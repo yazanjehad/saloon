@@ -20,7 +20,7 @@ export class CreateEmployeeWeeklyScheduleDto {
   @IsNumber()
   employee: number;
 
-  @IsNotEmpty()
-  @IsDateString()
-  date: string; // التاريخ الفعلي لهذا اليوم
+  // @IsNotEmpty()
+  // @IsDateString()
+  // date: string; // التاريخ الفعلي لهذا اليوم
 }

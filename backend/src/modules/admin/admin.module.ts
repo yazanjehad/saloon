@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
 import { AdminSaloon } from './entities/admin.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Saloon } from '../saloon/entities/saloon.entity';
 import { AuthModule } from '../../auth/auth.module';
 import { EmployeeModule } from '../employee/employee.module';
@@ -16,6 +16,8 @@ import { CustomerModule } from '../customer/customer.module';
   ],
   controllers: [AdminController],
   providers: [AdminService],
-  exports: [TypeOrmModule],
+  exports: [AdminService],
 })
 export class AdminModule {}
+
+

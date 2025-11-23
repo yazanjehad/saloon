@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EmployeeWeeklySchedule } from './entities/employee-weekly-schedule.entity';
+import { CreateEmployeeWeeklyScheduleDto } from './dto/create-employee-weekly-schedule.dto';
 
 @Injectable()
 export class EmployeeWeeklyScheduleService {
@@ -9,14 +14,21 @@ export class EmployeeWeeklyScheduleService {
     @InjectRepository(EmployeeWeeklySchedule)
     private readonly scheduleRepo: Repository<EmployeeWeeklySchedule>,
   ) {}
-  async create(dto: any) {
+  async create(dto: CreateEmployeeWeeklyScheduleDto) {
     // تحقق من التكرار
     const existing = await this.scheduleRepo.findOne({
-      where: { employee: { id: dto.employee }, date: dto.date }
+      where: { employee: { id: dto.employee }, day: dto.day },
+      relations: ['employee'],
     });
-    if (existing) throw new BadRequestException('Schedule already exists for this date');
+    if (existing)
+      throw new BadRequestException(
+        `Schedule already exists for ${dto.day} this date`,
+      );
 
-    const schedule = this.scheduleRepo.create(dto);
+    const schedule = this.scheduleRepo.create({
+      ...dto,
+      employee: { id: dto.employee },
+    });
     return await this.scheduleRepo.save(schedule);
   }
 

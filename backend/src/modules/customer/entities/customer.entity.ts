@@ -5,7 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Unique,
+  OneToMany,
 } from 'typeorm';
+import { Review } from '../../reviews/entities/review.entity';
 
 export enum Gender {
   Male = 'Male',
@@ -33,9 +35,9 @@ export class Customer {
   email: string;
 
   @Column()
-  password: string; 
+  password: string;
 
-    // add phon,gender,imge columns 
+  // add phon,gender,imge columns
   @Column()
   phone: string;
 
@@ -50,4 +52,7 @@ export class Customer {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => Review, (review) => review.customer)
+  reviews: Review[];
 }

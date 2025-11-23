@@ -11,6 +11,8 @@ import {
 } from 'typeorm';
 import { Saloon } from '../../saloon/entities/saloon.entity';
 import { EmployeeWeeklySchedule } from '../../employee-weekly-schedule/entities/employee-weekly-schedule.entity';
+import { Service } from 'src/modules/services/entities/service.entity';
+import { Review } from '../../reviews/entities/review.entity';
 
 @Entity('employees')
 export class Employee {
@@ -50,12 +52,32 @@ export class Employee {
   })
   saloon: Saloon;
 
+//   @ManyToMany(() => Service, (service) => service.employees)
+//   @JoinTable({
+//   name: 'employee_services',
+//   joinColumn: { name: 'employee_id', referencedColumnName: 'id' },
+//   inverseJoinColumn: { name: 'service_id', referencedColumnName: 'id' },
+// })
+services: Service[];
 
-  @OneToMany(() => EmployeeWeeklySchedule, (schedule) => schedule.employee, { cascade: true })
+
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
+  @Column({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
+
+  @OneToMany(() => Review, (review) => review.employee)
+  reviews: Review[];
+  @OneToMany(() => EmployeeWeeklySchedule, (schedule) => schedule.employee)
 weeklySchedule: EmployeeWeeklySchedule[];
 
-  @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
-  @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
 }

@@ -1,3 +1,4 @@
+import { Employee } from 'src/modules/employee/entities/employee.entity';
 import { Saloon } from '../../saloon/entities/saloon.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 

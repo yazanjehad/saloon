@@ -8,6 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { EmployeeWeeklyScheduleService } from './employee-weekly-schedule.service';
+import { CreateEmployeeWeeklyScheduleDto } from './dto/create-employee-weekly-schedule.dto';
 
 @Controller('employee-weekly-schedule')
 export class EmployeeWeeklyScheduleController {
@@ -16,7 +17,7 @@ export class EmployeeWeeklyScheduleController {
   ) {}
 
   @Post()
-  create(@Body() dto: any) {
+  create(@Body() dto: CreateEmployeeWeeklyScheduleDto) {
     return this.scheduleService.create(dto);
   }
 
@@ -36,7 +37,7 @@ export class EmployeeWeeklyScheduleController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() dto: any) {
+  update(@Param('id') id: number, @Body() dto) {
     return this.scheduleService.update(id, dto);
   }
 

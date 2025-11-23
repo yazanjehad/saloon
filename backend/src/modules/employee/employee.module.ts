@@ -4,14 +4,13 @@ import { EmployeeController } from './employee.controller';
 import { Saloon } from '../saloon/entities/saloon.entity';
 import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
 import { Employee } from './entities/employee.entity';
+import { BookingSlot } from '../booking-slot/entities/booking-slot.entity';
+import { Review } from '../reviews/entities/review.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Employee, Saloon]),
-  ],
+  imports: [TypeOrmModule.forFeature([Employee, Saloon, BookingSlot, Review])],
   controllers: [EmployeeController],
   providers: [EmployeeService],
   exports: [EmployeeService],
-  
 })
 export class EmployeeModule {}
