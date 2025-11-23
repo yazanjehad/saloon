@@ -5,10 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Saloon } from './entities/saloon.entity';
 import { Employee } from '../employee/entities/employee.entity';
 import { Service } from '../services/entities/service.entity';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Saloon, Employee,Service])],
-  controllers: [SaloonController],
+  imports: [
+    TypeOrmModule.forFeature([Saloon, Employee, Service]),
+    AdminModule,
+  ],  controllers: [SaloonController],
   providers: [SaloonService],
   exports: [SaloonService],
 })

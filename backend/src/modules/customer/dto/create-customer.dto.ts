@@ -1,29 +1,49 @@
-import { IsString, IsEmail, MinLength, IsNotEmpty, Matches } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  MinLength,
+  IsNotEmpty,
+  Matches,
+  IsIn,
+  IsOptional,
+} from 'class-validator';
+
 export class CreateCustomerDto {
-    @IsString()
-@IsNotEmpty()
-userName: string; // Customer username
-
-@IsString()
-@IsNotEmpty()
-firstName: string; // Customer first name      
-
-@IsString()
-@IsNotEmpty()
-lastName: string; // Customer last name 
-
-@IsEmail()
-@IsNotEmpty()
-email: string; // Customer email address
-
- @IsString()
+  @IsString()
   @IsNotEmpty()
-  @MinLength(6) // Minimum length of 6 characters for password
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/, { 
-    message: 'Password too weak'  // Password must contain at least one letter and one number
+  userName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  firstName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  lastName: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @MinLength(6)
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/, {
+    message: 'Password too weak',
   })
-  password: string; // Admin password
+  password: string;
 
+  @Matches(/^[0-9]{10,15}$/, {
+    message: 'Phone must be between 10 and 15 digits',
+  })
+  phone: string;
+
+  @IsIn(['Male', 'Female'])
+  gender: 'Male' | 'Female';
+
+  @IsOptional()
+  @IsString()
+  @Matches(/^(https?:\/\/.*\.(?:png|jpg|jpeg|webp|gif))$/i, {
+    message: 'Invalid image URL format',
+  })
+  imageUrl?: string;
 }
-
-

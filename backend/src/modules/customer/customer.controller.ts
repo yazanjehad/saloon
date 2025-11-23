@@ -1,45 +1,62 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, ParseIntPipe, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  ParseIntPipe,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { CustomerResponseDto } from './dto/customer-response.dto';
 
-@Controller('customer')
+@Controller('customers')
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
-  // Signup method to register a new customer user
+  // Signup a new customer
   @Post('signup')
-  async signup(@Body() createCustomerDto: CreateCustomerDto) {
-    return this.customerService.signup(createCustomerDto);
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async signup(@Body() dto: CreateCustomerDto): Promise<CustomerResponseDto> {
+    return this.customerService.signup(dto);
   }
-  // Login method to authenticate a customer user
+
+  //  Login an existing customer
   @Post('login')
   async login(@Body() body: { userName: string; password: string }) {
     return this.customerService.login(body.userName, body.password);
   }
 
-  // CRUD endpoints for customer users 
-  // Get all customers
-  @Get('all')
-  findAll() {
+  //  Get all customers
+  @Get()
+  async findAll(): Promise<CustomerResponseDto[]> {
     return this.customerService.findAll();
   }
 
-  // Get a specific customer by ID
+  //  Get a customer by ID
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.customerService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<CustomerResponseDto> {
+    return this.customerService.findOne(id);
   }
 
-  // Update a customer's information
+  //  Update a customer by ID
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
-    return this.customerService.update(+id, updateCustomerDto);
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateCustomerDto,
+  ): Promise<CustomerResponseDto> {
+    return this.customerService.update(id, dto);
   }
 
-  // Delete a customer by ID
+//  Delete a customer by ID
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.customerService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.customerService.remove(id);
   }
 }

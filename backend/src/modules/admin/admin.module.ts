@@ -1,16 +1,15 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
 import { AdminSaloon } from './entities/admin.entity';
-import { Saloon } from '../saloon/entities/saloon.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-// Module to encapsulate admin-related components
 @Module({
-  imports: [TypeOrmModule.forFeature([AdminSaloon,Saloon])],
+  imports: [TypeOrmModule.forFeature([AdminSaloon])],
   controllers: [AdminController],
   providers: [AdminService],
-    exports: [AdminService],
-  
+  exports: [AdminService],
 })
 export class AdminModule {}
+
+

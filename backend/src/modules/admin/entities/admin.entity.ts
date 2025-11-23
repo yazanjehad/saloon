@@ -15,16 +15,19 @@ export class AdminSaloon {
 
   @Column({ unique: true, name: 'user_name' })
   userName: string;
- 
 
-  
-
-  
   @Column({ unique: true })
   email: string;
 
   @Column({ length: 200 })
   password: string;
+
+  // add phon,imge columns
+  @Column( { unique: true })
+  phone: string;  
+  
+  @Column({ name: 'image_url' })
+  imageUrl: string;
   
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

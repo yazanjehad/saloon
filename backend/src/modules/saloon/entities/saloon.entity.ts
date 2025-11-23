@@ -1,9 +1,7 @@
 // src/modules/saloon/entities/saloon.entity.ts
- import { AdminSaloon } from '../../admin/entities/admin.entity';
+import { AdminSaloon } from '../../admin/entities/admin.entity';
 import { Employee } from "../../employee/entities/employee.entity";
 import { Service } from '../../services/entities/service.entity';
-
-
 import {
   Entity,
   Column,
@@ -11,6 +9,8 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('saloons')
@@ -31,29 +31,37 @@ export class Saloon {
   phone: string;
 
   @Column({ name: 'image_url', nullable: true })
-  imageUrl: string;
+  imageUrl?: string;
 
-  // Many-to-One relationship with AdminSaloon
-  // Many saloons can belong to one admin
+    // add  description , openingHours, rating, latitude, longitude
+  @Column({ type: 'text', nullable: true })
+  description?: string;
+
+  @Column({ name: 'opening_hours', nullable: true })
+  openingHours?: string;
+
+  @Column({ type: 'float', default: 0 })
+  rating: number;
+
+  @Column({ type: 'double', nullable: true })
+  latitude?: number;
+
+  @Column({ type: 'double', nullable: true })
+  longitude?: number;
+
   @ManyToOne(() => AdminSaloon, (admin) => admin.saloons)
-  @JoinColumn({ name: 'admin_id' }) 
+  @JoinColumn({ name: 'admin_id' })
   admin: AdminSaloon;
 
-  // One-to-Many relationship with Employee
-  // A saloon can have multiple employees
   @OneToMany(() => Employee, (employee) => employee.saloon)
   employees: Employee[];
 
-  @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
-  @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
-
-  
-
-  
-  @OneToMany(() => Service, (service: any) => service.saloon)
+  @OneToMany(() => Service, (service) => service.saloon)
   services: Service[];
 
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }

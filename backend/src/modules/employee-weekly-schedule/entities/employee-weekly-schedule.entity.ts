@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Unique } from 'typeorm';
 import { Employee } from '../../employee/entities/employee.entity';
 
 @Entity('employee_weekly_schedule')
+@Unique(['employee', 'date']) // يمنع تكرار نفس الموظف ونفس التاريخ
 export class EmployeeWeeklySchedule {
   @PrimaryGeneratedColumn()
   id: number;
@@ -17,6 +18,9 @@ export class EmployeeWeeklySchedule {
 
   @Column({ default: true })
   isWorking: boolean;
+
+  @Column({ type: 'date' })
+  date: string; // التاريخ الفعلي لليوم
 
   @ManyToOne(() => Employee, (employee) => employee.weeklySchedule, {
     onDelete: 'CASCADE',

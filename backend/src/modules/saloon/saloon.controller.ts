@@ -1,34 +1,42 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+// src/modules/saloon/saloon.controller.ts
+import { Controller, Get, Post, Patch, Delete, Param, Body, ParseIntPipe, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SaloonService } from './saloon.service';
 import { CreateSaloonDto } from './dto/create-saloon.dto';
-import { UpdateSaloonDto } from './dto/update-saloon.dto';
+import { SaloonResponseDto } from './dto/saloon-response.dto';
 
-@Controller('saloon')
+@Controller('saloons')
 export class SaloonController {
   constructor(private readonly saloonService: SaloonService) {}
 
-  @Post()
-  create(@Body() createSaloonDto: CreateSaloonDto) {
-    return this.saloonService.create(createSaloonDto);
+  // Create a new saloon
+  @Post('create')
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async create(@Body() dto: CreateSaloonDto, adminId: number): Promise<SaloonResponseDto> {
+    return this.saloonService.create(dto, adminId);
   }
 
-  @Get()
-  findAll() {
+  //  Get all saloons
+  @Get('all')
+  async findAll(): Promise<SaloonResponseDto[]> {
     return this.saloonService.findAll();
   }
 
+  // Get a specific saloon by ID
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.saloonService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<SaloonResponseDto> {
+    return this.saloonService.findOne(id);
   }
 
+  // Update a specific saloon by ID
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSaloonDto: UpdateSaloonDto) {
-    return this.saloonService.update(+id, updateSaloonDto);
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async update(@Param('id', ParseIntPipe) id: number, @Body() dto: CreateSaloonDto): Promise<SaloonResponseDto> {
+    return this.saloonService.update(id, dto);
   }
 
+  // Delete a specific saloon by ID
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.saloonService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.saloonService.remove(id);
   }
 }
