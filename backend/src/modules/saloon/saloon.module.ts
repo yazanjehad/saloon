@@ -6,10 +6,11 @@ import { Saloon } from './entities/saloon.entity';
 import { Employee } from '../employee/entities/employee.entity';
 import { Service } from '../services/entities/service.entity';
 import { AdminModule } from '../admin/admin.module';
+import { AdminSaloon } from '../admin/entities/admin.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Saloon, Employee, Service]),
+    TypeOrmModule.forFeature([Saloon, Employee, Service,AdminSaloon]),
     AdminModule,
   ],  controllers: [SaloonController],
   providers: [SaloonService],

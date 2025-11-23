@@ -12,7 +12,7 @@ export class EmployeeWeeklyScheduleService {
   async create(dto: any) {
     // تحقق من التكرار
     const existing = await this.scheduleRepo.findOne({
-      where: { employee: { id: dto.employee }, date: dto.date }
+      where: { employee: { id: dto.employee }}
     });
     if (existing) throw new BadRequestException('Schedule already exists for this date');
 
