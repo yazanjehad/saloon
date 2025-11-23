@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Unique }
 import { Employee } from '../../employee/entities/employee.entity';
 
 @Entity('employee_weekly_schedule')
-@Unique(['employee' ]) // يمنع تكرار نفس الموظف ونفس التاريخ
+ // يمنع تكرار نفس الموظف ونفس التاريخ
 export class EmployeeWeeklySchedule {
   @PrimaryGeneratedColumn()
   id: number;
