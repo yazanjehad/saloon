@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Saloon } from '../../saloon/entities/saloon.entity';
 import { EmployeeWeeklySchedule } from '../../employee-weekly-schedule/entities/employee-weekly-schedule.entity';
+import { Review } from '../../reviews/entities/review.entity';
 
 @Entity('employees')
 export class Employee {
@@ -33,19 +34,32 @@ export class Employee {
 
   @Column({ length: 15 })
   phone: string;
-  
+
   @ManyToOne(() => Saloon, (saloon) => saloon.employees, {
     onDelete: 'SET NULL',
     nullable: true,
   })
   saloon: Saloon;
 
+  @OneToMany(() => EmployeeWeeklySchedule, (schedule) => schedule.employee, {
+    cascade: true,
+  })
+  weeklySchedule: EmployeeWeeklySchedule[];
 
-  @OneToMany(() => EmployeeWeeklySchedule, (schedule) => schedule.employee, { cascade: true })
-weeklySchedule: EmployeeWeeklySchedule[];
-
-  @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   createdAt: Date;
-  @Column({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
   updatedAt: Date;
+
+  @OneToMany(() => Review, (review) => review.employee)
+  reviews: Review[];
 }

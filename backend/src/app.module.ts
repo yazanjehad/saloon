@@ -11,6 +11,7 @@ import { EmployeeModule } from './modules/employee/employee.module';
 import { CustomerModule } from './modules/customer/customer.module';
 import { ServicesModule } from './modules/services/services.module';
 import { EmployeeWeeklyScheduleModule } from './modules/employee-weekly-schedule/employee-weekly-schedule.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { EmployeeWeeklyScheduleModule } from './modules/employee-weekly-schedule
     CustomerModule,
     ServicesModule,
     EmployeeWeeklyScheduleModule,
+    ReviewsModule,
   ],
 })
 export class AppModule {}

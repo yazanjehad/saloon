@@ -32,7 +32,7 @@ export class SaloonService {
 
     const fullSaloon = await this.saloonRepo.findOne({
       where: { id: saved.id },
-      relations: ['admin', 'employees'], // <-- إضافة الموظفين هنا
+      relations: ['admin', 'employees','reviews'], // <-- إضافة الموظفين هنا
     });
 
     if (!fullSaloon)
@@ -44,7 +44,7 @@ export class SaloonService {
   async update(id: number, dto: UpdateSaloonDto): Promise<SaloonResponseDto> {
     const saloon = await this.saloonRepo.findOne({
       where: { id },
-      relations: ['admin', 'employees'], // <-- إضافة الموظفين هنا
+      relations: ['admin', 'employees', 'reviews'], // <-- إضافة الموظفين هنا
     });
     if (!saloon) throw new NotFoundException('Saloon not found');
 
@@ -65,7 +65,7 @@ export class SaloonService {
 
   async findAll(): Promise<SaloonResponseDto[]> {
     const all = await this.saloonRepo.find({
-      relations: ['admin', 'employees'],
+      relations: ['admin', 'employees', 'reviews'],
     }); // <-- إضافة الموظفين هنا
     return all.map((s) => this.toResponse(s));
   }
@@ -73,7 +73,7 @@ export class SaloonService {
   async findOne(id: number): Promise<SaloonResponseDto> {
     const saloon = await this.saloonRepo.findOne({
       where: { id },
-      relations: ['admin', 'employees'], // <-- إضافة الموظفين هنا
+      relations: ['admin', 'employees', 'reviews'], // <-- إضافة الموظفين هنا
     });
     if (!saloon) throw new NotFoundException('Saloon not found');
     return this.toResponse(saloon);

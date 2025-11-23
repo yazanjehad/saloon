@@ -17,6 +17,7 @@ export class SaloonResponseDto {
   updatedAt: Date;
   admin_id: number;
   employees?: any[];
+  reviews?: any[];
 
   constructor(saloon: Saloon) {
     this.id = saloon.id;
@@ -34,5 +35,6 @@ export class SaloonResponseDto {
     this.updatedAt = saloon.updatedAt;
     this.admin_id = saloon.admin.id;
     this.employees = saloon.employees;
+    this.reviews = saloon.reviews;
   }
 }
