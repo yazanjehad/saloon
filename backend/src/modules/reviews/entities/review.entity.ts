@@ -1,14 +1,22 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { Saloon } from '../../saloon/entities/saloon.entity';
 import { Employee } from '../../employee/entities/employee.entity';
 import { Customer } from '../../customer/entities/customer.entity';
+import { Appointment } from '../../appointment/entities/appointment.entity';
 
 @Entity('reviews')
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'enum', enum: [1, 2, 3, 4, 5], default: 1 })
+  @Column({ type: 'enum', enum: [1, 2, 3, 4, 5] })
   rating: number;
 
   @Column({ type: 'text', nullable: true })
@@ -29,34 +37,22 @@ export class Review {
   })
   updatedAt: Date;
 
-  // @Column({ type: 'enum', enum: ['saloon', 'employee'], default: 'saloon' })
-  // type: string;
+  @Column({ name: 'appointment_id', type: 'int' })
+  appointmentId: number;
 
-  @Column({
-    name: 'saloon_id',
-    type: 'int',
-    nullable: true,
-  })
-  saloonId: number;
-
-  @Column({
-    name: 'employee_id',
-    type: 'int',
-    nullable: true,
-  })
-  employeeId: number;
-
- 
-
-  //////////////////
-  @ManyToOne(() => Saloon, (saloon) => saloon.reviews, { nullable: true })
+  @ManyToOne(() => Saloon, (saloon) => saloon.reviews)
+  @JoinColumn({ name: 'saloon_id' })
   saloon: Saloon;
 
-  @ManyToOne(() => Employee, (employee) => employee.reviews, { nullable: true })
+  @ManyToOne(() => Employee, (employee) => employee.reviews)
+  @JoinColumn({ name: 'employee_id' })
   employee: Employee;
+
   @ManyToOne(() => Customer, (customer) => customer.reviews)
   customer: Customer;
 
-  // @ManyToOne(()=> appoiment, (appoiment) => appoiment.reviews)
-  // appoiment: appoiment
+  @Index({ unique: true })
+  @ManyToOne(() => Appointment, (appointment) => appointment.reviews)
+  @JoinColumn({ name: 'appointment_id' })
+  appointment: Appointment;
 }

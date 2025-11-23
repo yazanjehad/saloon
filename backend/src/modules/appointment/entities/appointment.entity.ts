@@ -11,6 +11,7 @@ import { Customer } from '../../customer/entities/customer.entity';
 import { Employee } from '../../employee/entities/employee.entity';
 import { Saloon } from '../../saloon/entities/saloon.entity';
 import {  AppointmentServiceEntity } from '../../appointment-service/entities/appointment-service.entity';
+import { Review } from '../../reviews/entities/review.entity';
 
 @Entity('appointments')
 export class Appointment {
@@ -42,4 +43,7 @@ export class Appointment {
 
   @OneToMany(() => AppointmentServiceEntity, (as) => as.appointment)
   services: AppointmentServiceEntity[];
+
+  @OneToMany(() => Review, (review) => review.appointment)
+  reviews: Review[];
 }

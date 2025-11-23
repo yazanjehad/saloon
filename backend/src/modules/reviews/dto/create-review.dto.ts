@@ -1,9 +1,9 @@
 import {
+  IsNumber,
   IsOptional,
   IsString,
   MaxLength,
   MinLength,
-  IsNumber,
 } from 'class-validator';
 
 export class CreateReviewDto {
@@ -18,9 +18,12 @@ export class CreateReviewDto {
 
   @IsNumber()
   @IsOptional()
-  saloonId?: number;
+  saloonId?: number; // تقييم الصالون اختياري
 
   @IsNumber()
   @IsOptional()
-  employeeId?: number;
+  employeeId?: number; // تقييم الموظف اختياري
+
+  @IsNumber()
+  appointmentId: number; // الحجز إلزامي
 }
