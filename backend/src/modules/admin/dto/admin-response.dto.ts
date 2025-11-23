@@ -17,3 +17,5 @@ export class AdminResponseDto {
     this.imageUrl = admin.imageUrl;  
   }
 }
+
+

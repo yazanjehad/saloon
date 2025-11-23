@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { Saloon } from '../../saloon/entities/saloon.entity';
 import { EmployeeWeeklySchedule } from '../../employee-weekly-schedule/entities/employee-weekly-schedule.entity';
@@ -25,15 +26,24 @@ export class Employee {
   @Column({ name: 'user_name', unique: true })
   userName: string;
 
+  @Index()
   @Column({ unique: true })
   email: string;
+
 
   @Column({ length: 200 })
   password: string;
 
   @Column({ length: 15 })
   phone: string;
+
+// add isActive  and imageUrl columns
+  @Column({ default: true })
+  isActive: boolean;
   
+  @Column({ name: 'image_url', nullable: true, default: 'default-image.png' })
+  imageUrl: string;
+
   @ManyToOne(() => Saloon, (saloon) => saloon.employees, {
     onDelete: 'SET NULL',
     nullable: true,

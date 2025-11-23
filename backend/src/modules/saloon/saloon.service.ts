@@ -1,60 +1,171 @@
-// src/modules/saloon/saloon.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+// import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+// import { InjectRepository } from '@nestjs/typeorm';
+// import { Repository } from 'typeorm';
+// import { Saloon } from './entities/saloon.entity';
+// import { CreateSaloonDto } from './dto/create-saloon.dto';
+// import { UpdateSaloonDto } from './dto/update-saloon.dto';
+
+// @Injectable()
+// export class SaloonService {
+//   constructor(
+//     @InjectRepository(Saloon)
+//     private readonly saloonRepo: Repository<Saloon>,
+//   ) {}
+
+//   // ================================
+//   // CREATE Saloon
+//   // ================================
+//   async create(dto: CreateSaloonDto) {
+//     const exists = await this.saloonRepo.findOne({ where: { name: dto.name } });
+//     if (exists) throw new ConflictException('Saloon with this name already exists');
+
+//     const saloon = this.saloonRepo.create(dto);
+//     const saved = await this.saloonRepo.save(saloon);
+
+//     return saved; // فقط ترجع البيانات دون تغليفها برسالة
+//   }
+
+//   // ================================
+//   // GET ALL Saloons
+//   // ================================
+//   async findAll() {
+//     return this.saloonRepo.find({ relations: ['employees', 'services', 'admin'] });
+//   }
+
+//   // ================================
+//   // GET ONE Saloon
+//   // ================================
+//   async findOne(id: number) {
+//     const saloon = await this.saloonRepo.findOne({
+//       where: { id },
+//       relations: ['employees', 'services', 'admin'],
+//     });
+//     if (!saloon) throw new NotFoundException('Saloon not found');
+//     return saloon;
+//   }
+
+//   // ================================
+//   // UPDATE Saloon
+//   // ================================
+//   async update(id: number, dto: UpdateSaloonDto) {
+//     const saloon = await this.findOne(id);
+//     Object.assign(saloon, dto); // تعديل مباشرة على الكائن الموجود
+//     return this.saloonRepo.save(saloon);
+//   }
+
+//   // ================================
+//   // DELETE Saloon
+//   // ================================
+//   async remove(id: number) {
+//     const saloon = await this.findOne(id);
+//     await this.saloonRepo.remove(saloon);
+//     return saloon; // ترجع الكائن المحذوف
+//   }
+// }
+
+
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Saloon } from './entities/saloon.entity';
-import { AdminSaloon } from '../admin/entities/admin.entity';
 import { CreateSaloonDto } from './dto/create-saloon.dto';
+import { UpdateSaloonDto } from './dto/update-saloon.dto';
 import { SaloonResponseDto } from './dto/saloon-response.dto';
-
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class SaloonService {
   constructor(
     @InjectRepository(Saloon)
     private readonly saloonRepo: Repository<Saloon>,
-    @InjectRepository(AdminSaloon)
-    private readonly adminRepo: Repository<AdminSaloon>,
+    private readonly jwtService: JwtService,
   ) {}
 
-  private toResponse(saloon: Saloon): SaloonResponseDto {
-    return new SaloonResponseDto(saloon);
-  }
+  // ================================
+  // CREATE Saloon
+  // ================================
+  async create(dto: CreateSaloonDto) {
+    const exists = await this.saloonRepo.findOne({ where: { name: dto.name } });
+    if (exists) throw new ConflictException('Saloon with this name already exists');
 
-  async create(dto: CreateSaloonDto, adminId: number): Promise<SaloonResponseDto> {
-    const admin = await this.adminRepo.findOne({ where: { id: adminId } });
-    if (!admin) throw new NotFoundException('Admin not found');
-
-    const saloon = this.saloonRepo.create({ ...dto, admin });
+    const saloon = this.saloonRepo.create(dto);
     const saved = await this.saloonRepo.save(saloon);
-    return this.toResponse(saved);
+
+    // انشاء JWT للصالون
+    const token = this.jwtService.sign(
+      { sub: saved.id },
+      { secret: process.env.JWT_SALOON_SECRET },
+    );
+
+    return {
+      message: 'Saloon created successfully',
+      data: new SaloonResponseDto(saved),
+      token,
+    };
   }
 
-  async findAll(): Promise<SaloonResponseDto[]> {
-    const all = await this.saloonRepo.find({ relations: ['admin'] });
-    return all.map(s => this.toResponse(s));
+  // ================================
+  // GET ALL Saloons
+  // ================================
+  async findAll() {
+    const saloons = await this.saloonRepo.find({ relations: ['employees', 'services', 'admin'] });
+    return {
+      message: 'Saloons fetched successfully',
+      data: saloons.map(s => new SaloonResponseDto(s)),
+    };
   }
 
-  async findOne(id: number): Promise<SaloonResponseDto> {
-    const saloon = await this.saloonRepo.findOne({ where: { id }, relations: ['admin'] });
+  // ================================
+  // GET ONE Saloon
+  // ================================
+  async findOne(id: number) {
+    const saloon = await this.saloonRepo.findOne({
+      where: { id },
+      relations: ['employees', 'services', 'admin'],
+    });
     if (!saloon) throw new NotFoundException('Saloon not found');
-    return this.toResponse(saloon);
+
+    return {
+      message: 'Saloon fetched successfully',
+      data: new SaloonResponseDto(saloon),
+    };
   }
 
-  async update(id: number, dto: CreateSaloonDto): Promise<SaloonResponseDto> {
+  async findRaw(id: number) {
+  return await this.saloonRepo.findOne({
+    where: { id },
+    relations: ['employees', 'services', 'admin'],
+  });
+}
+
+  // ================================
+  // UPDATE Saloon
+  // ================================
+  async update(id: number, dto: UpdateSaloonDto) {
     const saloon = await this.saloonRepo.findOne({ where: { id } });
     if (!saloon) throw new NotFoundException('Saloon not found');
 
-    Object.assign(saloon, dto);
-    const saved = await this.saloonRepo.save(saloon);
-    return this.toResponse(saved);
+    Object.assign(saloon, dto); // نسخ الحقول الموجودة فقط
+    const updated = await this.saloonRepo.save(saloon);
+
+    return {
+      message: 'Saloon updated successfully',
+      data: new SaloonResponseDto(updated),
+    };
   }
 
-  async remove(id: number): Promise<{ message: string }> {
+  // ================================
+  // DELETE Saloon
+  // ================================
+  async remove(id: number) {
     const saloon = await this.saloonRepo.findOne({ where: { id } });
     if (!saloon) throw new NotFoundException('Saloon not found');
 
     await this.saloonRepo.remove(saloon);
-    return { message: 'Saloon deleted successfully' };
+    return {
+      message: 'Saloon removed successfully',
+      data: new SaloonResponseDto(saloon),
+    };
   }
 }
+
