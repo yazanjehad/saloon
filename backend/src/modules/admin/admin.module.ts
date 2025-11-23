@@ -10,5 +10,7 @@ import { Saloon } from '../saloon/entities/saloon.entity';
   imports: [TypeOrmModule.forFeature([AdminSaloon,Saloon])],
   controllers: [AdminController],
   providers: [AdminService],
+    exports: [AdminService],
+  
 })
 export class AdminModule {}

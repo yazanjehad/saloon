@@ -1,3 +1,4 @@
+import { Employee } from 'src/modules/employee/entities/employee.entity';
 import { Saloon } from '../../saloon/entities/saloon.entity';
 
 import {
@@ -6,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  ManyToMany,
 } from 'typeorm';
 
 @Entity('saloon_services')
@@ -49,6 +51,8 @@ export class Service {
   @JoinColumn({ name: 'saloon_id' })
   saloon: Saloon;
 
+@ManyToMany(() => Employee, (employee) => employee.services)
+employees: Employee[];
 
 
 

@@ -7,9 +7,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Saloon } from '../../saloon/entities/saloon.entity';
 import { EmployeeWeeklySchedule } from '../../employee-weekly-schedule/entities/employee-weekly-schedule.entity';
+import { Service } from 'src/modules/services/entities/service.entity';
 
 @Entity('employees')
 export class Employee {
@@ -39,6 +42,14 @@ export class Employee {
     nullable: true,
   })
   saloon: Saloon;
+
+  @ManyToMany(() => Service, (service) => service.employees)
+@JoinTable({
+  name: 'employee_services',
+  joinColumn: { name: 'employee_id', referencedColumnName: 'id' },
+  inverseJoinColumn: { name: 'service_id', referencedColumnName: 'id' },
+})
+services: Service[];
 
 
   @OneToMany(() => EmployeeWeeklySchedule, (schedule) => schedule.employee, { cascade: true })

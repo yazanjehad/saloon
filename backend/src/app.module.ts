@@ -11,6 +11,9 @@ import { EmployeeModule } from './modules/employee/employee.module';
 import { CustomerModule } from './modules/customer/customer.module';
 import { ServicesModule } from './modules/services/services.module';
 import { EmployeeWeeklyScheduleModule } from './modules/employee-weekly-schedule/employee-weekly-schedule.module';
+import { BookingSlotModule } from './modules/booking-slot/booking-slot.module';
+import { AppointmentModule } from './modules/appointment/appointment.module';
+import { AppointmentServiceModule } from './modules/appointment-service/appointment-service.module';
 
 @Module({
   imports: [
@@ -29,7 +32,12 @@ import { EmployeeWeeklyScheduleModule } from './modules/employee-weekly-schedule
     CustomerModule,
     ServicesModule,
     EmployeeWeeklyScheduleModule,
+    BookingSlotModule,
+    AppointmentModule,
+    AppointmentServiceModule,
+    
   ],
+  
 })
 export class AppModule {}
 
