@@ -1,6 +1,6 @@
 import { Employee } from 'src/modules/employee/entities/employee.entity';
 import { Saloon } from '../../saloon/entities/saloon.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, ManyToMany } from 'typeorm';
 
 @Entity('saloon_services')
 export class Service {
@@ -34,4 +34,9 @@ export class Service {
   @ManyToOne(() => Saloon, (saloon) => saloon.services)
   @JoinColumn({ name: 'saloon_id' })
   saloon: Saloon;
+
+  @ManyToMany(() => Employee, (employee) => employee.services)
+employees: Employee[];
+
 }
+

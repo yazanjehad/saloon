@@ -8,6 +8,8 @@ import {
   UpdateDateColumn,
   OneToMany,
   Index,
+  ManyToMany,
+  JoinTable
 } from 'typeorm';
 import { Saloon } from '../../saloon/entities/saloon.entity';
 import { EmployeeWeeklySchedule } from '../../employee-weekly-schedule/entities/employee-weekly-schedule.entity';
@@ -28,7 +30,6 @@ export class Employee {
   @Column({ name: 'user_name', unique: true })
   userName: string;
 
-  @Index()
   @Column({ unique: true })
   email: string;
 
@@ -52,12 +53,12 @@ export class Employee {
   })
   saloon: Saloon;
 
-//   @ManyToMany(() => Service, (service) => service.employees)
-//   @JoinTable({
-//   name: 'employee_services',
-//   joinColumn: { name: 'employee_id', referencedColumnName: 'id' },
-//   inverseJoinColumn: { name: 'service_id', referencedColumnName: 'id' },
-// })
+  @ManyToMany(() => Service, (service) => service.employees)
+  @JoinTable({
+  name: 'employee_services',
+  joinColumn: { name: 'employee_id', referencedColumnName: 'id' },
+  inverseJoinColumn: { name: 'service_id', referencedColumnName: 'id' },
+})
 services: Service[];
 
 
