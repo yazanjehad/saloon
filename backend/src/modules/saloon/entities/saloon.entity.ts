@@ -1,4 +1,3 @@
-// src/modules/saloon/entities/saloon.entity.ts
 import { AdminSaloon } from '../../admin/entities/admin.entity';
 import { Employee } from '../../employee/entities/employee.entity';
 import { Review } from '../../reviews/entities/review.entity';
@@ -34,7 +33,6 @@ export class Saloon {
   @Column({ name: 'image_url', nullable: true })
   imageUrl?: string;
 
-  // add  description , openingHours, rating, latitude, longitude
   @Column({ type: 'text', nullable: true })
   description?: string;
 

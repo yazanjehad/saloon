@@ -1,4 +1,3 @@
-// src/modules/saloon/dto/saloon-response.dto.ts
 import { Saloon } from '../entities/saloon.entity';
 
 export class SaloonResponseDto {

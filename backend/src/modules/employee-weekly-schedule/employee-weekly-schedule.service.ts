@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
 import { EmployeeWeeklySchedule } from './entities/employee-weekly-schedule.entity';
 import { EmployeeWeeklyScheduleResponseDto } from './dto/response-employee-weekly.dto';
 import { EmployeeWeeklyScheduleMessages } from 'src/common/error-messages';
@@ -13,29 +12,26 @@ export class EmployeeWeeklyScheduleService {
     private readonly scheduleRepo: Repository<EmployeeWeeklySchedule>,
   ) {}
 
- async create(dto: any) {
-  const schedule = this.scheduleRepo.create({
-    day: dto.day,
-    startTime: dto.startTime,
-    endTime: dto.endTime,
-    isWorking: dto.isWorking,
-    employee: { id: dto.employeeId },
-  });
+  async create(dto: any) {
+    const schedule = this.scheduleRepo.create({
+      day: dto.day,
+      startTime: dto.startTime,
+      endTime: dto.endTime,
+      isWorking: dto.isWorking,
+      employee: { id: dto.employeeId },
+    });
 
-  const saved: EmployeeWeeklySchedule = await this.scheduleRepo.save(schedule);
+    const saved = await this.scheduleRepo.save(schedule);
 
-  const result = await this.scheduleRepo.findOne({
-    where: { id: saved.id },
-    relations: ['employee'],
-  });
+    const result = await this.scheduleRepo.findOne({
+      where: { id: saved.id },
+      relations: ['employee'],
+    });
 
-  if (!result) throw new NotFoundException(EmployeeWeeklyScheduleMessages.NOT_FOUND);
+    if (!result) throw new NotFoundException(EmployeeWeeklyScheduleMessages.NOT_FOUND);
 
-  return {
-    message: EmployeeWeeklyScheduleMessages.CREATED,
-    data: new EmployeeWeeklyScheduleResponseDto(result),
-  };
-}
+    return new EmployeeWeeklyScheduleResponseDto(result);
+  }
 
   async update(id: number, dto: any) {
     const schedule = await this.scheduleRepo.findOne({
@@ -56,10 +52,7 @@ export class EmployeeWeeklyScheduleService {
 
     if (!result) throw new NotFoundException(EmployeeWeeklyScheduleMessages.NOT_FOUND);
 
-    return {
-      message: EmployeeWeeklyScheduleMessages.UPDATED,
-      data: new EmployeeWeeklyScheduleResponseDto(result),
-    };
+    return new EmployeeWeeklyScheduleResponseDto(result);
   }
 
   async delete(id: number) {
@@ -69,10 +62,7 @@ export class EmployeeWeeklyScheduleService {
 
     await this.scheduleRepo.remove(schedule);
 
-    return {
-      message: EmployeeWeeklyScheduleMessages.DELETED,
-      data: { id },
-    };
+    return { id };
   }
 
   async findOne(id: number) {
@@ -83,10 +73,7 @@ export class EmployeeWeeklyScheduleService {
 
     if (!schedule) throw new NotFoundException(EmployeeWeeklyScheduleMessages.NOT_FOUND);
 
-    return {
-      message: EmployeeWeeklyScheduleMessages.FETCHED,
-      data: new EmployeeWeeklyScheduleResponseDto(schedule),
-    };
+    return new EmployeeWeeklyScheduleResponseDto(schedule);
   }
 
   async findByEmployee(employeeId: number) {
@@ -95,10 +82,7 @@ export class EmployeeWeeklyScheduleService {
       relations: ['employee'],
     });
 
-    return {
-      message: EmployeeWeeklyScheduleMessages.LIST_FETCHED,
-      data: schedules.map(s => new EmployeeWeeklyScheduleResponseDto(s)),
-    };
+    return schedules.map(s => new EmployeeWeeklyScheduleResponseDto(s));
   }
 
   async findAll() {
@@ -106,9 +90,6 @@ export class EmployeeWeeklyScheduleService {
       relations: ['employee'],
     });
 
-    return {
-      message: EmployeeWeeklyScheduleMessages.LIST_FETCHED,
-      data: schedules.map(s => new EmployeeWeeklyScheduleResponseDto(s)),
-    };
+    return schedules.map(s => new EmployeeWeeklyScheduleResponseDto(s));
   }
 }

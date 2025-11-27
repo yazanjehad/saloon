@@ -1,11 +1,11 @@
-import {
-  IsString,
-  IsEmail,
-  MinLength,
-  IsNotEmpty,
-  Matches,
-  IsIn,
-  IsOptional,
+import { 
+  IsString, 
+  IsEmail, 
+  MinLength, 
+  IsNotEmpty, 
+  Matches, 
+  IsIn, 
+  IsOptional 
 } from 'class-validator';
 
 export class CreateCustomerDto {

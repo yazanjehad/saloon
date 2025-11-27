@@ -1,4 +1,3 @@
-// src/modules/saloon/saloon.controller.ts
 import { Controller, UseGuards, Post, Patch, Delete, Get, Body, Param, ParseIntPipe } from '@nestjs/common';
 import { SaloonService } from './saloon.service';
 import { adminGuard } from 'src/auth/guards/admin.gurad';
@@ -10,43 +9,33 @@ import { SaloonMessages } from 'src/common/error-messages';
 export class SaloonController {
   constructor(private readonly saloonService: SaloonService) {}
 
-  // إنشاء صالون جديد (Admin فقط)
   @Post('create')
   @UseGuards(adminGuard)
   async create(@Body() dto: CreateSaloonDto) {
-    const result = await this.saloonService.create(dto);
-    return { message: SaloonMessages.CREATED, data: result };
+    return { message: SaloonMessages.CREATED, data: await this.saloonService.create(dto) };
   }
 
-  // تعديل صالون (Admin فقط)
   @Patch(':id')
   @UseGuards(adminGuard)
   async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateSaloonDto) {
-    const result = await this.saloonService.update(id, dto);
-    return { message: SaloonMessages.UPDATED, data: result };
+    return { message: SaloonMessages.UPDATED, data: await this.saloonService.update(id, dto) };
   }
 
-  // حذف صالون (Admin فقط)
   @Delete(':id')
   @UseGuards(adminGuard)
   async remove(@Param('id', ParseIntPipe) id: number) {
-    const result = await this.saloonService.remove(id);
-    return { message: SaloonMessages.DELETED, data: result };
+    return { message: SaloonMessages.DELETED, data: await this.saloonService.remove(id) };
   }
 
-  // جلب كل الصالونات (Admin فقط)
   @Get('all')
   @UseGuards(adminGuard)
   async findAll() {
-    const result = await this.saloonService.findAll();
-    return { message: SaloonMessages.FETCHED, data: result };
+    return { message: SaloonMessages.FETCHED, data: await this.saloonService.findAll() };
   }
 
-  // جلب صالون واحد (Admin فقط)
   @Get(':id')
   @UseGuards(adminGuard)
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    const result = await this.saloonService.findOne(id);
-    return { message: SaloonMessages.FETCHED, data: result };
+    return { message: SaloonMessages.FETCHED, data: await this.saloonService.findOne(id) };
   }
 }

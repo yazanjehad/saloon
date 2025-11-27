@@ -1,17 +1,13 @@
-import { JwtService } from '@nestjs/jwt';
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 import { AdminSaloon } from './entities/admin.entity';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
+import { AdminMessages } from 'src/common/error-messages';
 
 interface AdminJwtPayload {
   sub: number;
@@ -26,100 +22,91 @@ export class AdminService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // ================================
-  // SIGNUP — إنشاء أدمن جديد
-  // ================================
+  // -------------------- SIGNUP --------------------
   async signup(dto: CreateAdminDto) {
-    // تحقق من عدم التكرار
     const exists = await this.adminRepo.findOne({
-      where: [{ userName: dto.userName }, { email: dto.email }],
+      where: [{ userName: dto.userName }, { email: dto.email }, { phone: dto.phone }],
     });
-    if (exists) throw new ConflictException('Username or email already in use');
+
+    if (exists) {
+      if (exists.userName === dto.userName)
+        throw new ConflictException(AdminMessages.DUPLICATE_USERNAME);
+      if (exists.email === dto.email)
+        throw new ConflictException(AdminMessages.DUPLICATE_EMAIL);
+      if (exists.phone === dto.phone)
+        throw new ConflictException(AdminMessages.DUPLICATE_PHONE);
+    }
 
     const hashed = await bcrypt.hash(dto.password, 10);
+    const admin = this.adminRepo.create({ ...dto, password: hashed });
 
-    const admin = this.adminRepo.create({
-      ...dto,
-      password: hashed,
-    });
-
-    const saved = await this.adminRepo.save(admin);
-
-    return {
-      message: 'Admin created successfully',
-      data: {
-        id: saved.id,
-        userName: saved.userName,
-        email: saved.email,
-      },
-    };
+    try {
+      const saved = await this.adminRepo.save(admin);
+      return {
+        message: AdminMessages.CREATED,
+        data: {
+          id: saved.id,
+          userName: saved.userName,
+          email: saved.email,
+          phone: saved.phone,
+        },
+      };
+    } catch (error) {
+      if (error.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException(
+          'Username, email, or phone already in use',
+        );
+      }
+      throw error;
+    }
   }
 
-  // ================================
-  // LOGIN — تسجيل دخول
-  // ================================
+  // -------------------- LOGIN --------------------
   async login(userName: string, password: string) {
     const admin = await this.adminRepo.findOne({ where: { userName } });
-    if (!admin) throw new UnauthorizedException('Invalid credentials');
+    if (!admin) throw new UnauthorizedException(AdminMessages.LOGIN_FAILED);
 
     const isMatch = await bcrypt.compare(password, admin.password);
-    if (!isMatch) throw new UnauthorizedException('Invalid credentials');
+    if (!isMatch) throw new UnauthorizedException(AdminMessages.LOGIN_FAILED);
 
-    const payload: AdminJwtPayload = {
-      sub: admin.id,
-      userName: admin.userName,
-    };
-
+    const payload: AdminJwtPayload = { sub: admin.id, userName: admin.userName };
     const token = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_ADMIN_SECRET,
     });
 
     return {
-      message: 'Login successful',
+      message: AdminMessages.LOGIN_SUCCESS,
       access_token: token,
-      admin: {
-        id: admin.id,
-        userName: admin.userName,
-      },
+      admin: { id: admin.id, userName: admin.userName },
     };
   }
 
-  // ================================
-  // CRUD — العمليات الأساسية
-  // ================================
+  // -------------------- CRUD --------------------
   async findAll(): Promise<AdminSaloon[]> {
-    return this.adminRepo.find();
+    return this.adminRepo.find({ relations: ['saloons'] });
   }
 
   async findOne(id: number): Promise<AdminSaloon> {
-    const admin = await this.adminRepo.findOne({ where: { id } });
-    if (!admin) throw new NotFoundException('Admin not found');
+    const admin = await this.adminRepo.findOne({ where: { id }, relations: ['saloons'] });
+    if (!admin) throw new NotFoundException(AdminMessages.NOT_FOUND);
     return admin;
   }
 
   async update(id: number, dto: UpdateAdminDto) {
     const admin = await this.findOne(id);
 
-    if (dto.password) {
-      dto.password = await bcrypt.hash(dto.password, 10);
-    }
+    if (dto.password) dto.password = await bcrypt.hash(dto.password, 10);
 
     Object.assign(admin, dto);
     const updatedAdmin = await this.adminRepo.save(admin);
 
-    return {
-      message: 'Admin updated successfully',
-      data: updatedAdmin,
-    };
+    return { message: AdminMessages.UPDATED, data: updatedAdmin };
   }
 
   async remove(id: number) {
     const admin = await this.findOne(id);
     await this.adminRepo.remove(admin);
 
-    return {
-      message: 'Admin removed successfully',
-      data: admin,
-    };
+    return { message: AdminMessages.DELETED, data: admin };
   }
 }

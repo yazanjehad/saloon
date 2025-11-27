@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -14,21 +14,17 @@ export class EmployeeService {
   constructor(
     @InjectRepository(Employee)
     private employeeRepo: Repository<Employee>,
-    private jwtService: JwtService, 
+    private jwtService: JwtService,
   ) {}
 
-  // ================================
-  // CREATE Employee
-  // ================================
+  // إنشاء موظف جديد
   async createEmployee(dto: CreateEmployeeDto) {
-    // تحقق من عدم تكرار اسم المستخدم أو الإيميل
     const exists = await this.employeeRepo.findOne({
       where: [{ userName: dto.userName }, { email: dto.email }],
     });
     if (exists) throw new ConflictException('Employee with this username or email already exists');
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-
     const employee = this.employeeRepo.create({
       ...dto,
       password: hashedPassword,
@@ -44,34 +40,31 @@ export class EmployeeService {
     };
   }
 
-  // ================================
-  // LOGIN Employee
-  // ================================
- async loginEmployee(userName: string, password: string) {
-  const emp = await this.employeeRepo.findOne({ where: { userName } });
-  if (!emp) throw new NotFoundException('Employee not found');
+  // تسجيل دخول الموظف
+  async loginEmployee(userName: string, password: string) {
+    const emp = await this.employeeRepo.findOne({ where: { userName } });
+    if (!emp) throw new NotFoundException('Employee not found');
+    if (!emp.isActive) throw new BadRequestException('Employee is inactive');
 
-  const isPasswordValid = await bcrypt.compare(password, emp.password);
-  if (!isPasswordValid) throw new ConflictException('Invalid password');
+    const isPasswordValid = await bcrypt.compare(password, emp.password);
+    if (!isPasswordValid) throw new ConflictException('Invalid password');
 
-  const payload = { sub: emp.id, userName: emp.userName };
-  const accessToken = this.jwtService.sign(payload, {
-    secret: jwtConstants.employeeSecret,
-    expiresIn: '1h',
-  });
+    const payload = { sub: emp.id, userName: emp.userName };
+    const accessToken = this.jwtService.sign(payload, {
+      secret: jwtConstants.employeeSecret,
+      expiresIn: '1h',
+    });
 
-  return {
-    message: 'Login successful',
-    data: {
-      employee: new EmployeeResponseDto(emp),
-      accessToken,
-    },
-  };
-}
+    return {
+      message: 'Login successful',
+      data: {
+        employee: new EmployeeResponseDto(emp),
+        accessToken,
+      },
+    };
+  }
 
-  // ================================
-  // GET ALL Employees
-  // ================================
+  // جلب كل الموظفين
   async findAllEmployees() {
     const employees = await this.employeeRepo.find();
     return {
@@ -80,9 +73,7 @@ export class EmployeeService {
     };
   }
 
-  // ================================
-  // GET ONE Employee
-  // ================================
+  // جلب موظف واحد
   async findEmployeeById(id: number) {
     const emp = await this.employeeRepo.findOne({ where: { id } });
     if (!emp) throw new NotFoundException('Employee not found');
@@ -93,14 +84,22 @@ export class EmployeeService {
     };
   }
 
-  // ================================
-  // UPDATE Employee
-  // ================================
+  // تعديل الموظف
   async updateEmployee(id: number, dto: UpdateEmployeeDto) {
     const emp = await this.employeeRepo.findOne({ where: { id } });
     if (!emp) throw new NotFoundException('Employee not found');
 
-    if (dto.userName) emp.userName = dto.userName;
+    // التحقق من تكرار userName و email
+    if (dto.userName) {
+      const exists = await this.employeeRepo.findOne({ where: { userName: dto.userName } });
+      if (exists && exists.id !== id) throw new ConflictException('Username already exists');
+      emp.userName = dto.userName;
+    }
+    if (dto.email) {
+      const exists = await this.employeeRepo.findOne({ where: { email: dto.email } });
+      if (exists && exists.id !== id) throw new ConflictException('Email already exists');
+      emp.email = dto.email;
+    }
     if (dto.password) emp.password = await bcrypt.hash(dto.password, 10);
 
     const updated = await this.employeeRepo.save(emp);
@@ -110,9 +109,7 @@ export class EmployeeService {
     };
   }
 
-  // ================================
-  // DELETE Employee
-  // ================================
+  // حذف الموظف
   async deleteEmployee(id: number) {
     const emp = await this.employeeRepo.findOne({ where: { id } });
     if (!emp) throw new NotFoundException('Employee not found');

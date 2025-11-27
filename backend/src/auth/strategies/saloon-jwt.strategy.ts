@@ -25,6 +25,6 @@ secretOrKey: process.env.SALOON_JWT_SECRET || 'default_saloon_secret',
       throw new UnauthorizedException('Saloon not found');
     }
 
-    return saloon; // بيرجع للـ request.user
+    return saloon; 
   }
 }

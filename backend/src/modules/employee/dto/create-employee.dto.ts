@@ -1,42 +1,58 @@
-import { IsString, IsEmail, IsNotEmpty, Length,IsBoolean,IsOptional } from 'class-validator';
+import { 
+  IsString, 
+  IsEmail, 
+  MinLength, 
+  IsNotEmpty, 
+  Matches, 
+  IsOptional, 
+  IsBoolean, 
+  IsNumber 
+} from 'class-validator';
 
 export class CreateEmployeeDto {
   @IsString()
   @IsNotEmpty()
-  @Length(1, 50)
+  userName: string;
+
+  @IsString()
+  @IsNotEmpty()
   firstName: string;
 
   @IsString()
   @IsNotEmpty()
-  @Length(1, 50)
   lastName: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Length(4, 20)
-  userName: string;
-
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @IsString()
   @IsNotEmpty()
-  @Length(6, 200)
+  @MinLength(8, { message: 'Password must be at least 8 characters long' })
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).+$/, {
+    message: 'Password must contain uppercase, lowercase, number, and special character',
+  })
   password: string;
 
   @IsString()
   @IsNotEmpty()
-  @Length(7, 15)
+  @Matches(/^[0-9]{10,15}$/, {
+    message: 'Phone must be between 10 and 15 digits',
+  })
   phone: string;
 
   @IsBoolean()
   @IsOptional()
   isActive?: boolean = true;
 
+  @IsNumber()
   @IsNotEmpty()
-  saloonId: number; 
+  saloonId: number;
 
-   @IsOptional()
   @IsString()
+  @IsOptional()
+  @Matches(/^(https?:\/\/.*\.(?:png|jpg|jpeg|webp|gif))$/i, {
+    message: 'Invalid image URL format',
+  })
   imageUrl?: string;
 }
