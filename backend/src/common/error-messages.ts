@@ -29,4 +29,12 @@ export const CustomerMessages = {
   UPDATED: 'Customer updated successfully',
   DELETED: 'Customer deleted successfully',
 };
+export const EmployeeWeeklyScheduleMessages = {
+  CREATED: 'Schedule created successfully',
+  UPDATED: 'Schedule updated successfully',
+  DELETED: 'Schedule removed successfully',
+  FETCHED: 'Schedule fetched successfully',
+  LIST_FETCHED: 'Schedules fetched successfully',
+  NOT_FOUND: 'Schedule not found',
+};
 

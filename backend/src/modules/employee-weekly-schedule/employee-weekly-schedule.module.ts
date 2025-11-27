@@ -4,12 +4,12 @@ import { EmployeeWeeklySchedule } from './entities/employee-weekly-schedule.enti
 import { EmployeeWeeklyScheduleService } from './employee-weekly-schedule.service';
 import { EmployeeWeeklyScheduleController } from './employee-weekly-schedule.controller';
 import { Employee } from '../employee/entities/employee.entity';
+import { adminGuard } from '../../auth/guards/admin.gurad';
 
 @Module({
-  imports:[ TypeOrmModule.forFeature([EmployeeWeeklySchedule,Employee])],
+  imports: [TypeOrmModule.forFeature([EmployeeWeeklySchedule, Employee])],
   controllers: [EmployeeWeeklyScheduleController],
-  providers: [EmployeeWeeklyScheduleService],
+  providers: [EmployeeWeeklyScheduleService, adminGuard],
   exports: [EmployeeWeeklyScheduleService],
-
 })
 export class EmployeeWeeklyScheduleModule {}

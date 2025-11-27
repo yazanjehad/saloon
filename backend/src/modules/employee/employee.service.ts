@@ -6,12 +6,15 @@ import { Employee } from './entities/employee.entity';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeeResponseDto } from './dto/employee-response.dto';
+import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from 'src/auth/jwt.constants';
 
 @Injectable()
 export class EmployeeService {
   constructor(
     @InjectRepository(Employee)
     private employeeRepo: Repository<Employee>,
+    private jwtService: JwtService, 
   ) {}
 
   // ================================
@@ -44,17 +47,27 @@ export class EmployeeService {
   // ================================
   // LOGIN Employee
   // ================================
-  async loginEmployee(userName: string, password: string) {
-    const emp = await this.employeeRepo.findOne({ where: { userName } });
-    if (!emp) throw new NotFoundException('Employee not found');
-    const isPasswordValid = await bcrypt.compare(password, emp.password);
-    if (!isPasswordValid) throw new ConflictException('Invalid password');
+ async loginEmployee(userName: string, password: string) {
+  const emp = await this.employeeRepo.findOne({ where: { userName } });
+  if (!emp) throw new NotFoundException('Employee not found');
 
-    return {
-      message: 'Login successful',
-      data: new EmployeeResponseDto(emp),
-    };
-  }
+  const isPasswordValid = await bcrypt.compare(password, emp.password);
+  if (!isPasswordValid) throw new ConflictException('Invalid password');
+
+  const payload = { sub: emp.id, userName: emp.userName };
+  const accessToken = this.jwtService.sign(payload, {
+    secret: jwtConstants.employeeSecret,
+    expiresIn: '1h',
+  });
+
+  return {
+    message: 'Login successful',
+    data: {
+      employee: new EmployeeResponseDto(emp),
+      accessToken,
+    },
+  };
+}
 
   // ================================
   // GET ALL Employees

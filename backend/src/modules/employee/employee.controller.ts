@@ -29,15 +29,15 @@ async createEmployee(@Body() body: CreateEmployeeDto) {
 }
 
 // Login
-@UseGuards(adminGuard)
 @Post('Login')
 async loginEmployee(@Body() body: { userName: string; password: string }) {
-  const result = await this.employeeService.loginEmployee(
-    body.userName,  
-    body.password,
-  );
-  return { message: EmployeeMessages.LOGIN_SUCCESS, data: result }; 
-  }
+  const result = await this.employeeService.loginEmployee(body.userName, body.password);
+  return {
+    message: EmployeeMessages.LOGIN_SUCCESS,
+    data: result.data,
+  };
+}
+
 
   // 🔥 جلب كل الموظفين — فقط للأدمن
   @UseGuards(adminGuard)

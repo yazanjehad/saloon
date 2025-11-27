@@ -1,12 +1,10 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { EmployeeWeeklySchedule } from './entities/employee-weekly-schedule.entity';
-import { CreateEmployeeWeeklyScheduleDto } from './dto/create-employee-weekly-schedule.dto';
+import { EmployeeWeeklyScheduleResponseDto } from './dto/response-employee-weekly.dto';
+import { EmployeeWeeklyScheduleMessages } from 'src/common/error-messages';
 
 @Injectable()
 export class EmployeeWeeklyScheduleService {
@@ -14,35 +12,67 @@ export class EmployeeWeeklyScheduleService {
     @InjectRepository(EmployeeWeeklySchedule)
     private readonly scheduleRepo: Repository<EmployeeWeeklySchedule>,
   ) {}
-  async create(dto: CreateEmployeeWeeklyScheduleDto) {
-    // تحقق من التكرار
-    const existing = await this.scheduleRepo.findOne({
-      where: { employee: { id: dto.employee }, day: dto.day },
+
+ async create(dto: any) {
+  const schedule = this.scheduleRepo.create({
+    day: dto.day,
+    startTime: dto.startTime,
+    endTime: dto.endTime,
+    isWorking: dto.isWorking,
+    employee: { id: dto.employeeId },
+  });
+
+  const saved: EmployeeWeeklySchedule = await this.scheduleRepo.save(schedule);
+
+  const result = await this.scheduleRepo.findOne({
+    where: { id: saved.id },
+    relations: ['employee'],
+  });
+
+  if (!result) throw new NotFoundException(EmployeeWeeklyScheduleMessages.NOT_FOUND);
+
+  return {
+    message: EmployeeWeeklyScheduleMessages.CREATED,
+    data: new EmployeeWeeklyScheduleResponseDto(result),
+  };
+}
+
+  async update(id: number, dto: any) {
+    const schedule = await this.scheduleRepo.findOne({
+      where: { id },
       relations: ['employee'],
     });
-    if (existing)
-      throw new BadRequestException(
-        `Schedule already exists for ${dto.day} this date`,
-      );
 
-    const schedule = this.scheduleRepo.create({
-      ...dto,
-      employee: { id: dto.employee },
+    if (!schedule) throw new NotFoundException(EmployeeWeeklyScheduleMessages.NOT_FOUND);
+
+    Object.assign(schedule, dto);
+
+    const updated = await this.scheduleRepo.save(schedule);
+
+    const result = await this.scheduleRepo.findOne({
+      where: { id: updated.id },
+      relations: ['employee'],
     });
-    return await this.scheduleRepo.save(schedule);
+
+    if (!result) throw new NotFoundException(EmployeeWeeklyScheduleMessages.NOT_FOUND);
+
+    return {
+      message: EmployeeWeeklyScheduleMessages.UPDATED,
+      data: new EmployeeWeeklyScheduleResponseDto(result),
+    };
   }
 
-  async findAll() {
-    return await this.scheduleRepo.find({
-      relations: ['employee'],
-    });
-  }
+  async delete(id: number) {
+    const schedule = await this.scheduleRepo.findOne({ where: { id } });
 
-  async findByEmployee(employeeId: number) {
-    return await this.scheduleRepo.find({
-      where: { employee: { id: employeeId } },
-      relations: ['employee'],
-    });
+    if (!schedule) throw new NotFoundException(EmployeeWeeklyScheduleMessages.NOT_FOUND);
+
+    await this.scheduleRepo.remove(schedule);
+
+    return {
+      message: EmployeeWeeklyScheduleMessages.DELETED,
+      data: { id },
+    };
   }
 
   async findOne(id: number) {
@@ -51,21 +81,34 @@ export class EmployeeWeeklyScheduleService {
       relations: ['employee'],
     });
 
-    if (!schedule) {
-      throw new NotFoundException('Weekly schedule not found');
-    }
+    if (!schedule) throw new NotFoundException(EmployeeWeeklyScheduleMessages.NOT_FOUND);
 
-    return schedule;
+    return {
+      message: EmployeeWeeklyScheduleMessages.FETCHED,
+      data: new EmployeeWeeklyScheduleResponseDto(schedule),
+    };
   }
 
-  async update(id: number, dto: any) {
-    const schedule = await this.findOne(id);
-    Object.assign(schedule, dto);
-    return await this.scheduleRepo.save(schedule);
+  async findByEmployee(employeeId: number) {
+    const schedules = await this.scheduleRepo.find({
+      where: { employee: { id: employeeId } },
+      relations: ['employee'],
+    });
+
+    return {
+      message: EmployeeWeeklyScheduleMessages.LIST_FETCHED,
+      data: schedules.map(s => new EmployeeWeeklyScheduleResponseDto(s)),
+    };
   }
 
-  async remove(id: number) {
-    const schedule = await this.findOne(id);
-    return await this.scheduleRepo.remove(schedule);
+  async findAll() {
+    const schedules = await this.scheduleRepo.find({
+      relations: ['employee'],
+    });
+
+    return {
+      message: EmployeeWeeklyScheduleMessages.LIST_FETCHED,
+      data: schedules.map(s => new EmployeeWeeklyScheduleResponseDto(s)),
+    };
   }
 }

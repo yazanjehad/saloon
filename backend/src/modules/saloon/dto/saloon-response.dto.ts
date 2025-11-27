@@ -15,9 +15,9 @@ export class SaloonResponseDto {
   longitude?: number;
   createdAt: Date;
   updatedAt: Date;
-  admin_id: number;
-  employees?: any[];
-  reviews?: any[];
+  admin_id?: number;
+  employees: any[];
+  reviews: any[];
 
   constructor(saloon: Saloon) {
     this.id = saloon.id;
@@ -25,16 +25,16 @@ export class SaloonResponseDto {
     this.address = saloon.address;
     this.city = saloon.city;
     this.phone = saloon.phone;
-    this.imageUrl = saloon.imageUrl;
-    this.description = saloon.description;
-    this.openingHours = saloon.openingHours;
+    this.imageUrl = saloon.imageUrl ?? undefined;
+    this.description = saloon.description ?? undefined;
+    this.openingHours = saloon.openingHours ?? undefined;
     this.rating = saloon.rating;
-    this.latitude = saloon.latitude;
-    this.longitude = saloon.longitude;
+    this.latitude = saloon.latitude ?? undefined;
+    this.longitude = saloon.longitude ?? undefined;
     this.createdAt = saloon.createdAt;
     this.updatedAt = saloon.updatedAt;
-    this.admin_id = saloon.admin.id;
-    this.employees = saloon.employees;
-    this.reviews = saloon.reviews;
+    this.admin_id = saloon.admin?.id ?? undefined;
+    this.employees = saloon.employees ?? [];
+    this.reviews = saloon.reviews ?? [];
   }
 }
