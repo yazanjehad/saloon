@@ -7,8 +7,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Index,
   ManyToMany,
-  JoinTable,
+  JoinTable
 } from 'typeorm';
 import { Saloon } from '../../saloon/entities/saloon.entity';
 import { EmployeeWeeklySchedule } from '../../employee-weekly-schedule/entities/employee-weekly-schedule.entity';
@@ -32,11 +33,19 @@ export class Employee {
   @Column({ unique: true })
   email: string;
 
+
   @Column({ length: 200 })
   password: string;
 
   @Column({ length: 15 })
   phone: string;
+
+// add isActive  and imageUrl columns
+  @Column({ default: true })
+  isActive: boolean;
+  
+  @Column({ name: 'image_url', nullable: true, default: 'default-image.png' })
+  imageUrl: string;
 
   @ManyToOne(() => Saloon, (saloon) => saloon.employees, {
     onDelete: 'SET NULL',
@@ -45,7 +54,7 @@ export class Employee {
   saloon: Saloon;
 
   @ManyToMany(() => Service, (service) => service.employees)
-@JoinTable({
+  @JoinTable({
   name: 'employee_services',
   joinColumn: { name: 'employee_id', referencedColumnName: 'id' },
   inverseJoinColumn: { name: 'service_id', referencedColumnName: 'id' },

@@ -19,3 +19,5 @@ export class AdminResponseDto {
     this.saloons = admin.saloons;
   }
 }
+
+

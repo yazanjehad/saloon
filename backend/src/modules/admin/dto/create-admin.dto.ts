@@ -1,10 +1,10 @@
-import {
-  IsString,
-  IsEmail,
-  MinLength,
-  IsNotEmpty,
-  Matches,
-  IsOptional,
+import { 
+  IsString, 
+  IsEmail, 
+  MinLength, 
+  IsNotEmpty, 
+  Matches, 
+  IsOptional 
 } from 'class-validator';
 
 export class CreateAdminDto {
@@ -26,9 +26,9 @@ export class CreateAdminDto {
 
   @IsString()
   @IsNotEmpty()
-  @MinLength(6)
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/, {
-    message: 'Password too weak',
+  @MinLength(8, { message: 'Password must be at least 8 characters long' })
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).+$/, {
+    message: 'Password must contain uppercase, lowercase, number, and special character',
   })
   password: string;
 
@@ -44,5 +44,5 @@ export class CreateAdminDto {
   @Matches(/^(https?:\/\/.*\.(?:png|jpg|jpeg|webp|gif))$/i, {
     message: 'Invalid image URL format',
   })
-  imageUrl: string;
+  imageUrl?: string;
 }

@@ -1,36 +1,32 @@
-import {
-  Injectable,
-  ConflictException,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not, DeepPartial } from 'typeorm';
+import { Repository, DeepPartial } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Customer } from './entities/customer.entity';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { CustomerResponseDto } from './dto/customer-response.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class CustomerService {
   constructor(
     @InjectRepository(Customer)
     private readonly customerRepo: Repository<Customer>,
+    private readonly jwtService: JwtService,
   ) {}
 
-  private toResponse(Customer: Customer): CustomerResponseDto {
-    return new CustomerResponseDto(Customer);
+  private toResponse(customer: Customer): CustomerResponseDto {
+    return new CustomerResponseDto(customer);
   }
 
   // Signup
   async signup(dto: CreateCustomerDto): Promise<CustomerResponseDto> {
-    // check the basics (username/email/phone)
     const conflict = await this.customerRepo.findOne({
       where: [{ userName: dto.userName }, { email: dto.email }, { phone: dto.phone }],
     });
+
     if (conflict) {
-      // return best possible message
       if (conflict.userName === dto.userName) throw new ConflictException('Username already exists.');
       if (conflict.email === dto.email) throw new ConflictException('Email already exists.');
       if (conflict.phone === dto.phone) throw new ConflictException('Phone already exists.');
@@ -39,7 +35,7 @@ export class CustomerService {
     const hashed = await bcrypt.hash(dto.password, 10);
     const customer = this.customerRepo.create({ ...dto, password: hashed } as DeepPartial<Customer>);
     const saved = await this.customerRepo.save(customer);
-    return this.toResponse(saved as Customer);
+    return this.toResponse(saved);
   }
 
   // Login
@@ -50,32 +46,35 @@ export class CustomerService {
     const ok = await bcrypt.compare(password, customer.password);
     if (!ok) throw new UnauthorizedException('Invalid credentials');
 
-    // later: generate JWT here and return token + customer DTO
+    const payload = { id: customer.id };
+    const token = await this.jwtService.signAsync(payload);
+
     return {
       message: 'Login successful',
+      token,
       customer: this.toResponse(customer),
     };
   }
 
-  // Find all
+  // Get all customers
   async findAll(): Promise<CustomerResponseDto[]> {
     const all = await this.customerRepo.find();
-    return all.map((Customer) => this.toResponse(Customer));
+    return all.map(customer => this.toResponse(customer));
   }
 
-  // Find one
+  // Get one customer
   async findOne(id: number): Promise<CustomerResponseDto> {
-    const c = await this.customerRepo.findOne({ where: { id } });
-    if (!c) throw new NotFoundException('Customer not found');
-    return this.toResponse(c);
+    const customer = await this.customerRepo.findOne({ where: { id } });
+    if (!customer) throw new NotFoundException('Customer not found');
+    return this.toResponse(customer);
   }
 
-  // Update
+  // Update customer
   async update(id: number, dto: UpdateCustomerDto): Promise<CustomerResponseDto> {
     const customer = await this.customerRepo.findOne({ where: { id } });
     if (!customer) throw new NotFoundException('Customer not found');
 
-    // check conflicts for username/email/phone excluding current id
+    // Check conflicts
     if (dto.userName || dto.email || dto.phone) {
       const conflicts = await this.customerRepo.findOne({
         where: [
@@ -98,10 +97,10 @@ export class CustomerService {
 
     Object.assign(customer, dto);
     const saved = await this.customerRepo.save(customer);
-    return this.toResponse(saved as Customer);
+    return this.toResponse(saved);
   }
 
-  // Remove
+  // Delete customer
   async remove(id: number): Promise<{ message: string }> {
     const customer = await this.customerRepo.findOne({ where: { id } });
     if (!customer) throw new NotFoundException('Customer not found');

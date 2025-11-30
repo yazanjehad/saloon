@@ -5,12 +5,14 @@ import { EmployeeWeeklyScheduleService } from './employee-weekly-schedule.servic
 import { EmployeeWeeklyScheduleController } from './employee-weekly-schedule.controller';
 import { Employee } from '../employee/entities/employee.entity';
 import { BookingSlotModule } from '../booking-slot/booking-slot.module';
+import { adminGuard } from '../../auth/guards/admin.gurad';
+
+
 
 @Module({
   imports:[ TypeOrmModule.forFeature([EmployeeWeeklySchedule,Employee]),BookingSlotModule,],
   controllers: [EmployeeWeeklyScheduleController],
-  providers: [EmployeeWeeklyScheduleService],
+  providers: [EmployeeWeeklyScheduleService, adminGuard],
   exports: [EmployeeWeeklyScheduleService],
-
 })
 export class EmployeeWeeklyScheduleModule {}

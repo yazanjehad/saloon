@@ -1,59 +1,41 @@
-// src/modules/saloon/saloon.controller.ts
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Param,
-  Body,
-  ParseIntPipe,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, UseGuards, Post, Patch, Delete, Get, Body, Param, ParseIntPipe } from '@nestjs/common';
 import { SaloonService } from './saloon.service';
+import { adminGuard } from 'src/auth/guards/admin.gurad';
 import { CreateSaloonDto } from './dto/create-saloon.dto';
-import { SaloonResponseDto } from './dto/saloon-response.dto';
 import { UpdateSaloonDto } from './dto/update-saloon.dto';
+import { SaloonMessages } from 'src/common/error-messages';
 
 @Controller('saloons')
 export class SaloonController {
   constructor(private readonly saloonService: SaloonService) {}
 
-  // Create a new saloon
   @Post('create')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async create(@Body() dto: CreateSaloonDto): Promise<SaloonResponseDto> {
-    return this.saloonService.create(dto); // تمرير DTO فقط
+  @UseGuards(adminGuard)
+  async create(@Body() dto: CreateSaloonDto) {
+    return { message: SaloonMessages.CREATED, data: await this.saloonService.create(dto) };
   }
 
-  // Get all saloons
-  @Get('all')
-  async findAll(): Promise<SaloonResponseDto[]> {
-    return this.saloonService.findAll();
-  }
-
-  // Get a specific saloon by ID
-  @Get(':id')
-  async findOne(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<SaloonResponseDto> {
-    return this.saloonService.findOne(id);
-  }
-
-  // Update a specific saloon by ID
   @Patch(':id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateSaloonDto,
-  ): Promise<SaloonResponseDto> {
-    return this.saloonService.update(id, dto);
+  @UseGuards(adminGuard)
+  async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateSaloonDto) {
+    return { message: SaloonMessages.UPDATED, data: await this.saloonService.update(id, dto) };
   }
 
-  // Delete a specific saloon by ID
   @Delete(':id')
+  @UseGuards(adminGuard)
   async remove(@Param('id', ParseIntPipe) id: number) {
-    return this.saloonService.remove(id);
+    return { message: SaloonMessages.DELETED, data: await this.saloonService.remove(id) };
+  }
+
+  @Get('all')
+  @UseGuards(adminGuard)
+  async findAll() {
+    return { message: SaloonMessages.FETCHED, data: await this.saloonService.findAll() };
+  }
+
+  @Get(':id')
+  @UseGuards(adminGuard)
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return { message: SaloonMessages.FETCHED, data: await this.saloonService.findOne(id) };
   }
 }

@@ -1,7 +1,7 @@
-import { IsBoolean, IsDateString, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateEmployeeWeeklyScheduleDto {
-  @IsEnum(['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'])
+  @IsEnum(['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'], { message: 'Day must be a valid weekday' })
   day: string;
 
   @IsOptional()
@@ -14,13 +14,13 @@ export class CreateEmployeeWeeklyScheduleDto {
 
   @IsOptional()
   @IsBoolean()
-  isWorking?: boolean;
+  isWorking?: boolean = true;
 
-  @IsNotEmpty()
-  @IsNumber()
-  employee: number;
+  @IsNotEmpty({ message: 'Employee ID is required' })
+  @IsNumber({}, { message: 'Employee ID must be a number' })
+  employeeId: number;   
 
-  // @IsNotEmpty()
-  // @IsDateString()
-  // date: string; // التاريخ الفعلي لهذا اليوم
+  @IsOptional()
+  @IsString()
+  notes?: string;
 }

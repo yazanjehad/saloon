@@ -1,12 +1,4 @@
-// src/modules/saloon/dto/create-saloon.dto.ts
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsNumber,
-  Min,
-  Max,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumber, Min, Max } from 'class-validator';
 
 export class CreateSaloonDto {
   @IsString()
@@ -53,5 +45,5 @@ export class CreateSaloonDto {
 
   @IsNumber()
   @IsNotEmpty()
-  adminId?: number;
+  adminId: number;
 }
