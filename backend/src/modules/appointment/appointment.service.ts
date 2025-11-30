@@ -33,9 +33,7 @@ export class AppointmentService {
     serviceIds: number[];
   }) {
 
-    // -----------------------
-    // 1️⃣ نجيب الـ BookingSlot
-    // -----------------------
+
     const slot = await this.slotRepo.findOne({
       where: { id: dto.bookingSlotId },
       relations: ['employee', 'employee.saloon'],
@@ -44,18 +42,14 @@ export class AppointmentService {
     if (!slot) throw new Error('Booking slot not found');
     if (!slot.isAvailable) throw new Error('This slot is already booked.');
 
-    // -----------------------
-    // 2️⃣ نجيب العميل
-    // -----------------------
+ 
     const customer = await this.customerRepo.findOne({
       where: { id: dto.customerId },
     });
 
     if (!customer) throw new Error('Customer not found');
 
-    // -----------------------
-    // 3️⃣ نجيب الخدمات
-    // -----------------------
+
     const services = await this.serviceRepo.findBy({
       id: In(dto.serviceIds),
     });
@@ -63,14 +57,12 @@ export class AppointmentService {
     if (services.length === 0)
       throw new Error('No valid services selected');
 
-    // -----------------------
-    // 4️⃣ ننشئ Appointment
-    // -----------------------
+ 
     const appointment = new Appointment();
     appointment.bookingSlot = slot;
     appointment.customer = customer;
     appointment.employee = slot.employee;
-    appointment.saloon = slot.employee.saloon; // مهم جدًا
+    appointment.saloon = slot.employee.saloon; 
     appointment.status = 'pending';
 
     const savedAppointment = await this.appointmentRepo.save(appointment);
@@ -90,9 +82,7 @@ export class AppointmentService {
 
     await this.appServiceRepo.save(appServices);
 
-    // -----------------------
-    // 6️⃣ تحديث حالة الـ Slot
-    // -----------------------
+   
     slot.isAvailable = false;
     await this.slotRepo.save(slot);
 

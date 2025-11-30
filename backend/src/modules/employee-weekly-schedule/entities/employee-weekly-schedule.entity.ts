@@ -11,10 +11,10 @@ export class EmployeeWeeklySchedule {
   day: string;
 
   @Column({ name: 'start_time', type: 'time', nullable: true })
-  startTime: string;
+  startTime: string | null;
 
   @Column({ name: 'end_time', type: 'time', nullable: true })
-  endTime: string;
+  endTime: string | null;
 
   @Column({ default: true })
   isWorking: boolean;

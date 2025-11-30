@@ -1,6 +1,5 @@
-// src/modules/booking-slot/booking-slot.service.ts
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, LessThan } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookingSlot } from './entities/booking-slot.entity';
 import { Employee } from '../employee/entities/employee.entity';
@@ -15,6 +14,7 @@ export class BookingSlotService {
     @InjectRepository(EmployeeWeeklySchedule) private scheduleRepo: Repository<EmployeeWeeklySchedule>,
   ) {}
 
+  
   async generateSlots(employeeId: number) {
     const employee = await this.employeeRepo.findOne({
       where: { id: employeeId },
@@ -23,37 +23,128 @@ export class BookingSlotService {
 
     if (!employee) throw new Error('Employee not found');
 
+    // Delete past slots
+    await this.slotRepo.delete({
+      employee: { id: employeeId },
+      date: LessThan(new Date().toISOString().split('T')[0])
+    });
+
     const slots: BookingSlot[] = [];
 
     for (const schedule of employee.weeklySchedule) {
-      if (!schedule.isWorking) continue;
+      // تجاهل الأيام المغلقة أو غير مكتملة البيانات
+      if (!schedule.isWorking || !schedule.startTime || !schedule.endTime) continue;
 
       const services = employee.services;
+      const slotDate = nextDateOfWeek(schedule.day); // التاريخ القادم لليوم
+
+      // Check if slots already exist for this date and employee
+      const existingSlots = await this.slotRepo.find({
+        where: {
+          employee: { id: employeeId },
+          date: slotDate,
+        },
+      });
+      if (existingSlots.length > 0) continue; // Skip if slots already exist for this date
 
       for (const service of services) {
-        const start = schedule.startTime; // "09:00:00"
-        const end = schedule.endTime;     // "17:00:00"
-
-        let current = startToMinutes(start); // دالة تحويل الوقت إلى دقائق
-        const endMinutes = startToMinutes(end);
+        let current = startToMinutes(schedule.startTime);
+        const endMinutes = startToMinutes(schedule.endTime);
 
         while (current + service.durationMinutes <= endMinutes) {
           const slot = new BookingSlot();
           slot.employee = employee;
           slot.service = service;
-          slot.date = nextDateOfWeek(schedule.day); // دالة تعطي تاريخ اليوم القادم
+          slot.date = slotDate;
           slot.startTime = minutesToTime(current);
           slot.endTime = minutesToTime(current + service.durationMinutes);
           slot.isAvailable = true;
           slots.push(slot);
 
-          current += service.durationMinutes; // ننتقل للفترة التالية
+          current += service.durationMinutes;
         }
       }
     }
 
     return this.slotRepo.save(slots);
   }
+  async deleteSlotsForDay(employeeId: number, day: string) {
+    const slotDate = nextDateOfWeek(day);
+    await this.slotRepo.delete({
+      employee: { id: employeeId },
+      date: slotDate,
+    });
+  }
+
+    
+
+
+  async getSlotsByEmployeeId(employeeId: number): Promise<BookingSlot[]> {
+    return this.slotRepo.find({
+      where: {
+        employee: { id: employeeId },
+      },
+      relations: ['service', 'employee'],
+      order: {
+        date: 'ASC',
+        startTime: 'ASC',
+      },
+    });
+  }
+
+async getSlotsByEmployeeIdAndServiceId(employeeId: number, serviceId: number) {
+  const slots = await this.slotRepo.find({
+    where: {
+      employee: { id: employeeId },
+      service: { id: serviceId },
+    },
+    relations: ['service', 'employee'],
+    order: {
+      date: 'ASC',
+      startTime: 'ASC',
+    }
+  });
+
+  // تجهيز الريسبونس
+  return slots.map(s => ({
+    date: s.date,
+    dayName: new Date(s.date).toLocaleDateString('en-US', { weekday: 'long' }),
+    startTime: s.startTime,
+    endTime: s.endTime,
+    isAvailable: s.isAvailable,
+    employeeName: s.employee?.userName,
+    serviceName: s.service?.name,
+  }));
+}
+
+
+async getAvailableSlotsByCriteria(employeeId: number, serviceId: number, date: string) {
+  const slots = await this.slotRepo.find({
+    where: {
+      employee: { id: employeeId },
+      service: { id: serviceId },
+      date: date,
+    },
+    relations: ['employee', 'service'],
+    order: {
+      date: 'ASC',
+      startTime: 'ASC',
+    },
+  });
+
+  // تجهيز الريسبونس
+  return slots.map(s => ({
+    date: s.date,
+    dayName: new Date(s.date).toLocaleDateString('en-US', { weekday: 'long' }),
+    startTime: s.startTime,
+    endTime: s.endTime,
+    isAvailable: s.isAvailable,
+    employeeName: s.employee?.userName,
+    serviceName: s.service?.name,
+  }));
+}
+
+
 }
 
 // تحويل الوقت "HH:MM:SS" إلى دقائق
