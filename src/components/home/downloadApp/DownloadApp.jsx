@@ -37,7 +37,7 @@ const DownloadSection = () => (
 
 const DownloadApp = () => (
  <div className='section'>
-   <div className="download-page-container">
+   <div className="download-page-container ">
     <AppMockup />
     <DownloadSection />
   </div>

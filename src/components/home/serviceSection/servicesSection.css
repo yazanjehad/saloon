@@ -2,11 +2,15 @@
 } */
 /* Container and Header Styles */
 .services-container {
-  padding: 40px 20px ;
-  background-color: var(--white); 
+   background-color: var(--white); 
   text-align: center;
   width: 100%; 
+    max-width: 1200px;
+  margin: 50px auto;
+  padding: 5% 20px;
   box-sizing: border-box;
+
+
   
 }
 
@@ -14,6 +18,8 @@
   font-size: 2rem; 
   margin-bottom: 40px;
   color: #333;
+  text-align: start;
+  padding:0 100px ;
   font-weight: 700;
   font-family: 'Poppins', sans-serif;
 }
@@ -25,8 +31,9 @@
   gap: 25px;
   justify-items: center; 
   max-width: 1000px; 
-  margin: 0 auto; 
-  padding: 0 15px;
+  margin: 80px  auto !important; 
+  padding: 5% 20px;  
+  
 }
 
 /* Individual Service Card */

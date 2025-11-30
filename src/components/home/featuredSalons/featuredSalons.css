@@ -2,8 +2,9 @@
 .featured-salons-section {
   max-width: 1200px;
   margin: 50px auto;
-  padding: 0 20px;
+  padding: 5% 20px;
   background-color:var(--bg-light) !important;
+
 }
 
 .section-title {
