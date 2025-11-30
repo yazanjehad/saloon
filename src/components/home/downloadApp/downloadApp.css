@@ -1,0 +1,113 @@
+.download-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap-reverse;
+  padding: 5% 20px;
+  font-family: "Poppins", sans-serif;
+  gap: 40px;
+}
+
+.phone-frame {
+  width: 260px;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.phone-image {
+  width: 100%;
+  border-radius: 30px;
+  box-shadow: 0 15px 30px var(--shadow-strong);
+  transition: transform 0.3s;
+}
+
+.phone-image:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+.download-content {
+  max-width: 400px;
+  text-align: left;
+}
+
+.main-heading {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #222222 !important;
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+.subtext {
+  font-size: 1rem;
+  color: var(--text-gray);
+  margin-bottom: 25px;
+  line-height: 1.4;
+}
+
+.app-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.app-store-button,
+.google-play-button {
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--white);
+  font-weight: bold;
+  box-shadow: 0 5px 15px var(--shadow-medium);
+  transition: all 0.3s;
+  background-color: var(--black);
+}
+
+.app-store-button:hover {
+  transform: translateY(-2px);
+  background-color: var(--black-hover);
+}
+
+.google-play-button:hover {
+  transform: translateY(-2px);
+}
+
+.app-buttons .icon {
+  font-size: 1.6rem;
+  margin-right: 10px;
+}
+
+.text-group {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.small-text {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.large-text {
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .download-page-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .download-content {
+    max-width: 100%;
+  }
+
+  .app-buttons {
+    justify-content: center;
+  }
+}

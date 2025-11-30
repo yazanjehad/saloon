@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+
+  /* ===== Whites / Blacks ===== */
+  --white: #ffffff;
+  --black: #000000;
+  --black-hover: #111111;
+
+  /* ===== Grays ===== */
+  --text-dark: #222222;
+  --text-gray: #555555;
+  --text-light-gray: #777;
+  --gray-333: #333;
+  --gray-555: #555;
+  --gray-text: #5f5f5f;
+  --gray-border: #ddd;
+  --border: #e0e0e0;
+  --border-light: #eee;
+
+  /* ===== Backgrounds ===== */
+  --bg-light: #f8f8f8;
+  --light-bg: #f8f8f8;
+  --footer-bg: #f8f8f8;
+  --beige: #f6f0e8;
+  --beige-dark: #e8dfd5;
+  --glass-white: rgba(255, 255, 255, 0.35);
+
+  /* ===== Browns (Brand Colors) ===== */
+  --brown-dark: #3e2f22;
+  --brown-soft: #7a5c44;
+
+  /* ===== Buttons / Stars / Primary Colors ===== */
+  --star-gold: #ffc107;
+  --primary: #ff7f50;
+  --primary-hover: #ff5a26;
+  --logo-color: #111;
+  --hover-text: #000;
+  --gray-btn-bg: #f0f0f0;
+  --gray-btn-border: #ddd;
+
+  /* ===== Overlays ===== */
+  --black-overlay: rgba(0,0,0,0.15);
+  --white-25: rgba(255, 255, 255, 0.25);
+  --black-10: rgba(0, 0, 0, 0.10);
+  --black-15: rgba(0, 0, 0, 0.15);
+
+  /* ===== Shadows ===== */
+  --shadow: rgba(0, 0, 0, 0.08);
+  --shadow-light: rgba(0, 0, 0, 0.12);
+  --shadow-medium: rgba(0, 0, 0, 0.12);
+  --shadow-strong: rgba(0, 0, 0, 0.15);
+  --shadow-hover: rgba(0, 0, 0, 0.25);
+
+  /* ===== Carousel / Arrows ===== */
+  --arrow-bg: rgba(255, 255, 255, 0.9);
+  --arrow-color: #333333;
+
+}
+
+
+body {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    margin: 0;
+}
+
+button {
+    font-family: 'Poppins', sans-serif;
+}
+
+a {
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+}
