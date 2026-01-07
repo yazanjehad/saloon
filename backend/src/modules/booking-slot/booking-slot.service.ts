@@ -16,65 +16,88 @@ export class BookingSlotService {
 
   
   async generateSlots(employeeId: number) {
-    const employee = await this.employeeRepo.findOne({
-      where: { id: employeeId },
-      relations: ['services', 'weeklySchedule'],
+  const employee = await this.employeeRepo.findOne({
+    where: { id: employeeId },
+    relations: ['services', 'weeklySchedule'],
+  });
+
+  if (!employee) throw new Error('Employee not found');
+
+  const today = new Date().toISOString().split('T')[0];
+  const slotsToCreate: BookingSlot[] = [];
+
+  for (const schedule of employee.weeklySchedule) {
+
+    if (!schedule.isWorking || !schedule.startTime || !schedule.endTime) continue;
+
+    const slotDate = nextDateOfWeek(schedule.day);
+
+    //  فحص: لا نولد Slots لتاريخ اليوم السابق
+    if (slotDate < today) continue;
+
+    // إحضار كل الSlots الحالية لهذا التاريخ
+    const existingSlots = await this.slotRepo.find({
+      where: {
+        employee: { id: employeeId },
+        date: slotDate,
+      },
+      relations: ['service'],
     });
 
-    if (!employee) throw new Error('Employee not found');
+    const bookedSlots = existingSlots.filter(s => !s.isAvailable);
+    const freeSlots   = existingSlots.filter(s => s.isAvailable);
 
-    // Delete past slots
-    await this.slotRepo.delete({
-      employee: { id: employeeId },
-      date: LessThan(new Date().toISOString().split('T')[0])
-    });
+    //  لا نحذف المحجوز
+    // نحذف فقط الفارغة لأنها ستُعاد توليدها
+    if (freeSlots.length > 0) {
+      await this.slotRepo.remove(freeSlots);
+    }
 
-    const slots: BookingSlot[] = [];
+    // نبدأ توليد Slots جديدة للخدمات
+    for (const service of employee.services) {
+      let current = startToMinutes(schedule.startTime);
+      const endMinutes = startToMinutes(schedule.endTime);
 
-    for (const schedule of employee.weeklySchedule) {
-      // تجاهل الأيام المغلقة أو غير مكتملة البيانات
-      if (!schedule.isWorking || !schedule.startTime || !schedule.endTime) continue;
+      while (current + service.durationMinutes <= endMinutes) {
+        const slotStart = minutesToTime(current);
+        const slotEnd   = minutesToTime(current + service.durationMinutes);
 
-      const services = employee.services;
-      const slotDate = nextDateOfWeek(schedule.day); // التاريخ القادم لليوم
+        //  منع توليد Slot إذا كانت محجوزة بنفس الوقت لنفس الخدمة
+        const conflict = bookedSlots.some(b =>
+          b.service.id === service.id &&
+          b.startTime === slotStart &&
+          b.endTime === slotEnd
+        );
 
-      // Check if slots already exist for this date and employee
-      const existingSlots = await this.slotRepo.find({
-        where: {
-          employee: { id: employeeId },
-          date: slotDate,
-        },
-      });
-      if (existingSlots.length > 0) continue; // Skip if slots already exist for this date
-
-      for (const service of services) {
-        let current = startToMinutes(schedule.startTime);
-        const endMinutes = startToMinutes(schedule.endTime);
-
-        while (current + service.durationMinutes <= endMinutes) {
+        if (!conflict) {
           const slot = new BookingSlot();
           slot.employee = employee;
           slot.service = service;
           slot.date = slotDate;
-          slot.startTime = minutesToTime(current);
-          slot.endTime = minutesToTime(current + service.durationMinutes);
+          slot.startTime = slotStart;
+          slot.endTime = slotEnd;
           slot.isAvailable = true;
-          slots.push(slot);
-
-          current += service.durationMinutes;
+          slotsToCreate.push(slot);
         }
+
+        current += service.durationMinutes;
       }
     }
+  }
 
-    return this.slotRepo.save(slots);
-  }
-  async deleteSlotsForDay(employeeId: number, day: string) {
-    const slotDate = nextDateOfWeek(day);
-    await this.slotRepo.delete({
-      employee: { id: employeeId },
-      date: slotDate,
-    });
-  }
+  return this.slotRepo.save(slotsToCreate);
+}
+
+async deleteSlotsForDay(employeeId: number, day: string) {
+  const slotDate = nextDateOfWeek(day);
+
+  await this.slotRepo.delete({
+    employee: { id: employeeId },
+    date: slotDate,
+    isAvailable: true,          //  لا نحذف المحجوز
+  });
+}
+
 
     
 

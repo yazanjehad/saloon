@@ -117,6 +117,7 @@ export class EmployeeWeeklyScheduleService {
       await this.bookingSlotService.deleteSlotsForDay(
         schedule.employee.id,
         schedule.day,
+        
       );
 
       if (schedule.isWorking) {

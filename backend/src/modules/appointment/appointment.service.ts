@@ -68,7 +68,7 @@ export class AppointmentService {
     const savedAppointment = await this.appointmentRepo.save(appointment);
 
     // -----------------------
-    // 5️⃣ حفظ الخدمات داخل appointment_services
+    //  حفظ الخدمات داخل appointment_services
     // -----------------------
     const appServices: AppointmentServiceEntity[] = [];
 
